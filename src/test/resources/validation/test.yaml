@@ -1,0 +1,68 @@
+openapi: 3.0.1
+info:
+  title: testing source file
+  description: This is a sample server Petstore
+  termsOfService: http://swagger.io/terms/
+  version: 1.0.0
+servers:
+  - url: http://petstore.swagger.io/api
+paths:
+  /withInvalidComposedModel:
+    post:
+      operationId: withInvalidComposedModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - gps
+                - street
+              type: object
+              properties:
+                street:
+                  type: string
+                  example: 12345 El Monte Road
+                city:
+                  type: string
+                  example: Los Altos Hills
+                state:
+                  type: string
+                  example: CA
+                zip:
+                  type: string
+                  example: "94022"
+                gps:
+                  type: string
+        required: false
+      responses:
+        200:
+          description: success!
+components:
+  schemas:
+    ExtendedAddress:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Address'
+        - required:
+            - gps
+          type: object
+          properties:
+            gps:
+              type: string
+    Address:
+      required:
+        - street
+      type: object
+      properties:
+        street:
+          type: string
+          example: 12345 El Monte Road
+        city:
+          type: string
+          example: Los Altos Hills
+        state:
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: "94022"
