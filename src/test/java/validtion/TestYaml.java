@@ -39,6 +39,7 @@ public class TestYaml {
     assertEquals(schema.getProperties().size(), 5);
     assertTrue(schema.getProperties().containsKey("street"));
     assertTrue(schema.getProperties().containsKey("gps"));
+    System.out.println(schema.getProperties().get("street").getType());
 
   }
 }

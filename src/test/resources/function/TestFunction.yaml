@@ -1,0 +1,8 @@
+info:
+  version: 1.0.0
+function:
+  name: function1
+  template: src/main/resources/function1.yaml
+  resource:
+    - template: r1
+    - template: r2

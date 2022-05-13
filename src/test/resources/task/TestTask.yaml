@@ -1,0 +1,12 @@
+info:
+  version: 1.0.0
+tasks:
+  - task:
+      name: task1
+      function: function1
+  - task:
+      name: task2
+      function: function2
+  - task:
+      name: task3
+      function: function3
