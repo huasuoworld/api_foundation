@@ -6,3 +6,11 @@ function:
   resource:
     - template: r1
     - template: r2
+  input:
+    test:
+      type: String
+      length: 30
+  output:
+    test:
+      type: String
+      length: 30

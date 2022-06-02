@@ -37,7 +37,7 @@ public class ParameterValidationImpl implements ParameterValidation {
   @Override
   public Pair<Boolean, Object> headersValid(Map<String, Object> headers, String requestURI) {
     //step1 find file by openapiName
-    OpenAPI openAPI = OpenAPIBuilder.getInstance().openAPI(requestURI);
+    OpenAPI openAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI);
     //step2 validation headers
     return Pair.of(Boolean.TRUE, headers);
   }
@@ -46,7 +46,7 @@ public class ParameterValidationImpl implements ParameterValidation {
   public Pair<Boolean, Object> cookiesValid(Map<String, Object> headers, String requestURI) {
     //step1 read cookies from headers
     //step2 find file by openapiName
-    OpenAPI openAPI = OpenAPIBuilder.getInstance().openAPI(requestURI);
+    OpenAPI openAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI);
     //step3 validation cookies
 
     return Pair.of(Boolean.TRUE, headers);
@@ -55,7 +55,7 @@ public class ParameterValidationImpl implements ParameterValidation {
   @Override
   public Pair<Boolean, Object> payloadValid(Map<String, Object> payload, String requestURI) {
     //step1 find file by openapiName
-    OpenAPI openAPI = OpenAPIBuilder.getInstance().openAPI(requestURI);
+    OpenAPI openAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI);
     //step2 validation payload
     ObjectSchema schema = (ObjectSchema) openAPI.getPaths().get(requestURI).getPost().getRequestBody().getContent().get("application/json").getSchema();
     if(!ObjectUtils.isEmpty(payload) && !payload.isEmpty()) {

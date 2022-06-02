@@ -1,0 +1,42 @@
+openapi: 3.0.1
+info:
+  title: testing source file
+  description: This is a sample server Petstore
+  version: 1.0.0
+servers:
+  - url: http://localhost8080/api
+paths:
+  /applications:
+    post:
+      operationId: applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+        required: false
+      responses:
+        200:
+          description: success!
+components:
+  schemas:
+    Application:
+      required:
+        - appName
+      type: object
+      properties:
+        appName:
+          type: string
+          example: 应用名称
+        appProfile:
+          type: string
+          example: 环境名
+        appLabel:
+          type: string
+          example: 标签、版本
+        appCreated:
+          type: date
+          example: 创建时间
+        appModified:
+          type: date
+          example: 更新时间

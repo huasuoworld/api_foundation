@@ -13,21 +13,27 @@ import org.apache.commons.lang3.StringUtils;
  **/
 public class OpenAPIBuilder {
 
-  private static OpenAPIBuilder instance;
+  private static OpenAPIBuilder openAPIBuilder;
 
   private OpenAPIBuilder() {
 
   }
-  public static OpenAPIBuilder getInstance() {
-    if(ObjectUtils.isEmpty(instance)) {
+  public static OpenAPIBuilder getOpenAPIBuilder() {
+    if(ObjectUtils.isEmpty(openAPIBuilder)) {
       synchronized(OpenAPIBuilder.class) {
-        if(ObjectUtils.isEmpty(instance)) {
-          instance = new OpenAPIBuilder();
+        if(ObjectUtils.isEmpty(openAPIBuilder)) {
+          openAPIBuilder = new OpenAPIBuilder();
         }
       }
     }
-    return instance;
+    return openAPIBuilder;
   }
+
+  /**
+   * 根据requestURI请求路径获取validation目录下面yaml文件
+   * @param requestURI
+   * @return
+   */
   public OpenAPI openAPI(String requestURI) {
     String openapiName = requestURI.substring(requestURI.lastIndexOf("/"));
     String openapiNameEnv = System.getProperty("openapiName");
