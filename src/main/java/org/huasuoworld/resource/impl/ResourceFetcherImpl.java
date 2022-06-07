@@ -1,10 +1,9 @@
 package org.huasuoworld.resource.impl;
 
 import com.sun.tools.javac.util.Pair;
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import org.huasuoworld.http.OkHttpClientUtil;
+import org.huasuoworld.models.Resource;
 import org.huasuoworld.resource.ResourceFetcher;
 
 /**
@@ -15,7 +14,7 @@ import org.huasuoworld.resource.ResourceFetcher;
 public class ResourceFetcherImpl implements ResourceFetcher {
 
   @Override
-  public Map<String, Object> get(Map<String, Object> parameter) {
+  public Map<String, Object> get(Map<String, Object> parameter, Resource resource) {
     Pair<Boolean, Map<String, Object>> booleanMapPair = OkHttpClientUtil.okHttpClient().httpGet(null);
     if(!booleanMapPair.fst) {
       //TODO log error
@@ -26,7 +25,7 @@ public class ResourceFetcherImpl implements ResourceFetcher {
   }
 
   @Override
-  public Map<String, Object> post(Map<String, Object> parameter) {
+  public Map<String, Object> post(Map<String, Object> parameter, Resource resource) {
     Pair<Boolean, Map<String, Object>> booleanMapPair = OkHttpClientUtil.okHttpClient().httpPost(null, null);
     if(!booleanMapPair.fst) {
       //TODO log error
@@ -36,24 +35,17 @@ public class ResourceFetcherImpl implements ResourceFetcher {
   }
 
   @Override
-  public Map<String, Object> put(Map<String, Object> parameter) {
+  public Map<String, Object> put(Map<String, Object> parameter, Resource resource) {
     return null;
   }
 
   @Override
-  public Pair<Boolean, Object> delete(Map<String, Object> parameter) {
+  public Pair<Boolean, Object> delete(Map<String, Object> parameter, Resource resource) {
     return null;
   }
 
   @Override
-  public Map<String, Object> update(Map<String, Object> parameter) {
+  public Map<String, Object> update(Map<String, Object> parameter, Resource resource) {
     return null;
-  }
-
-  public static void main(String[] args) {
-    System.out.println(new BigDecimal(10).compareTo(new BigDecimal(5)));
-    System.out.println(new BigDecimal(10).compareTo(new BigDecimal(10)));
-    Map<String, Object> payNoMap = new LinkedHashMap<>();
-    System.out.println(payNoMap.isEmpty());
   }
 }

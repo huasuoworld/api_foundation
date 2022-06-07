@@ -5,9 +5,11 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.huasuoworld.input.OpenAPIBuilder;
+import org.huasuoworld.input.URLS;
 import org.huasuoworld.output.Constant;
 import org.huasuoworld.validation.ParameterValidation;
 
@@ -37,7 +39,7 @@ public class ParameterValidationImpl implements ParameterValidation {
   @Override
   public Pair<Boolean, Object> headersValid(Map<String, Object> headers, String requestURI) {
     //step1 find file by openapiName
-    OpenAPI openAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI);
+    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI, URLS.VALIDATION);
     //step2 validation headers
     return Pair.of(Boolean.TRUE, headers);
   }
@@ -46,7 +48,7 @@ public class ParameterValidationImpl implements ParameterValidation {
   public Pair<Boolean, Object> cookiesValid(Map<String, Object> headers, String requestURI) {
     //step1 read cookies from headers
     //step2 find file by openapiName
-    OpenAPI openAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI);
+    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI, URLS.VALIDATION);
     //step3 validation cookies
 
     return Pair.of(Boolean.TRUE, headers);
@@ -55,7 +57,11 @@ public class ParameterValidationImpl implements ParameterValidation {
   @Override
   public Pair<Boolean, Object> payloadValid(Map<String, Object> payload, String requestURI) {
     //step1 find file by openapiName
-    OpenAPI openAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI);
+    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI, URLS.VALIDATION);
+    if(!openAPIOpt.isPresent()) {
+      return Pair.of(Boolean.FALSE, Constant.FAIL);
+    }
+    OpenAPI openAPI = openAPIOpt.get();
     //step2 validation payload
     ObjectSchema schema = (ObjectSchema) openAPI.getPaths().get(requestURI).getPost().getRequestBody().getContent().get("application/json").getSchema();
     if(!ObjectUtils.isEmpty(payload) && !payload.isEmpty()) {

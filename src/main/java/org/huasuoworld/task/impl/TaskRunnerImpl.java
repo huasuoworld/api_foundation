@@ -1,8 +1,12 @@
 package org.huasuoworld.task.impl;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
+import org.huasuoworld.input.OpenAPIBuilder;
+import org.huasuoworld.input.URLS;
 import org.huasuoworld.task.TaskRunner;
 
 /**
@@ -31,6 +35,7 @@ public class TaskRunnerImpl implements TaskRunner {
   @Override
   public Map<String, Object> run(Map<String, Object> headers, Map<String, Object> payload,
       Map<String, Object> cookies, String taskName) {
+    Optional<OpenAPI> httpRequestOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(taskName, URLS.TASK);
     Map<String, Object> parameter = new HashMap<>();
     parameter.putAll(headers);
     parameter.putAll(payload);

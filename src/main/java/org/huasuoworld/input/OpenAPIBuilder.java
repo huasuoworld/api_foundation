@@ -3,6 +3,9 @@ package org.huasuoworld.input;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,22 +34,42 @@ public class OpenAPIBuilder {
 
   /**
    * 根据requestURI请求路径获取validation目录下面yaml文件
-   * @param requestURI
+   * @param yamlResourcePath
    * @return
    */
-  public OpenAPI openAPI(String requestURI) {
-    String openapiName = requestURI.substring(requestURI.lastIndexOf("/"));
+  public Optional<OpenAPI> openAPI(String yamlResourcePath, URLS urls) {
+    if(StringUtils.isEmpty(yamlResourcePath)) {
+      return Optional.empty();
+    }
     String openapiNameEnv = System.getProperty("openapiName");
     String openAPIUrl;
     if(StringUtils.isNotEmpty(openapiNameEnv)) {
       openAPIUrl = openapiNameEnv;
     } else {
-      openAPIUrl = "src/main/resources/validation/" + openapiName + ".yaml";
+      Optional<String> fileUrlOpt = URLS.getUrlByFilename(urls, yamlResourcePath);
+      if(!fileUrlOpt.isPresent()) {
+        return Optional.empty();
+      }
+      openAPIUrl = fileUrlOpt.get();
     }
     ParseOptions options = new ParseOptions();
     options.setResolveFully(true);
     options.setResolveCombinators(true);
     OpenAPI openAPI = new OpenAPIV3Parser().readLocation(openAPIUrl, null, options).getOpenAPI();
-    return openAPI;
+    return Optional.ofNullable(openAPI);
+  }
+
+  public static Optional<String> getExtension(Optional<OpenAPI> openAPIOpt, String extensionName) {
+    if(!openAPIOpt.isPresent()) {
+      return Optional.empty();
+    }
+    OpenAPI openAPI = openAPIOpt.get();
+    Object extension = openAPI.getInfo().getExtensions().get(extensionName);
+    return ObjectUtils.isEmpty(extension) ? Optional.empty() : Optional.ofNullable(extension.toString());
+  }
+
+  public static Map<String, Object> getExtensions(OpenAPI openAPI) {
+    Map<String, Object> extensions = openAPI.getInfo().getExtensions();
+    return ObjectUtils.isEmpty(extensions) ? new HashMap<>() : extensions;
   }
 }

@@ -2,6 +2,7 @@ package org.huasuoworld.function.impl;
 
 import java.util.Map;
 import org.huasuoworld.function.FunctionExecute;
+import org.huasuoworld.models.Function;
 
 /**
  * @author: huacailiang
@@ -11,7 +12,7 @@ import org.huasuoworld.function.FunctionExecute;
 public class FunctionExecuteImpl implements FunctionExecute {
 
   @Override
-  public void exec(Map<String, Object> parameter) {
+  public void exec(Map<String, Object> parameter, Function function) {
 
   }
 }
