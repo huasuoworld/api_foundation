@@ -4,10 +4,11 @@ info:
   description: This is a sample server Petstore
   termsOfService: http://swagger.io/terms/
   version: 1.0.0
-  extensions:
-    tasks: TestTask
 servers:
   - url: http://petstore.swagger.io/api
+    variables:
+      tasks:
+        default: TestTask
 paths:
   /withInvalidComposedModel:
     post:

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.huasuoworld.input.OpenAPIBuilder;
 import org.huasuoworld.input.URLS;
+import org.huasuoworld.models.InputParameter;
 import org.huasuoworld.task.TaskRunner;
 
 /**
@@ -33,15 +34,26 @@ public class TaskRunnerImpl implements TaskRunner {
   }
 
   @Override
-  public Map<String, Object> run(Map<String, Object> headers, Map<String, Object> payload,
-      Map<String, Object> cookies, String taskName) {
-    Optional<OpenAPI> httpRequestOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(taskName, URLS.TASK);
-    Map<String, Object> parameter = new HashMap<>();
-    parameter.putAll(headers);
-    parameter.putAll(payload);
-    parameter.putAll(cookies);
-
+  public Map<String, Object> run(InputParameter verifiedParameter) {
     Map<String, Object> responseMap = new HashMap<>();
+    Optional<String> taskNameOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(verifiedParameter.getOpenAPI()), "tasks");
+    if(!taskNameOpt.isPresent()) {
+      return responseMap;
+    }
+    Optional<OpenAPI> taskOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(taskNameOpt.get(), URLS.TASK);
+    Optional<String> functionOpt = OpenAPIBuilder.getVariables(taskOpenAPIOpt, "function");
+    if(!functionOpt.isPresent()) {
+      return responseMap;
+    }
+    Optional<String> resourceOpt = OpenAPIBuilder.getVariables(taskOpenAPIOpt, "resource");
+    if(!resourceOpt.isPresent()) {
+      return responseMap;
+    }
+    Map<String, Object> parameter = new HashMap<>();
+    parameter.putAll(verifiedParameter.getHeaders());
+    parameter.putAll(verifiedParameter.getPayload());
+    parameter.putAll(verifiedParameter.getCookies());
+
     //step1 find file by taskName
 
     //step2 fetch function

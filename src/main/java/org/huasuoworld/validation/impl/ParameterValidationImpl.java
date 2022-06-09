@@ -4,12 +4,10 @@ import com.sun.tools.javac.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
-import org.huasuoworld.input.OpenAPIBuilder;
-import org.huasuoworld.input.URLS;
+import org.huasuoworld.models.InputParameter;
 import org.huasuoworld.output.Constant;
 import org.huasuoworld.validation.ParameterValidation;
 
@@ -37,34 +35,34 @@ public class ParameterValidationImpl implements ParameterValidation {
   }
 
   @Override
-  public Pair<Boolean, Object> headersValid(Map<String, Object> headers, String requestURI) {
+  public Pair<Boolean, Object> headersValid(InputParameter inputParameter) {
     //step1 find file by openapiName
-    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI, URLS.VALIDATION);
+    Optional<OpenAPI> openAPIOpt = Optional.ofNullable(inputParameter.getOpenAPI());
     //step2 validation headers
-    return Pair.of(Boolean.TRUE, headers);
+    return Pair.of(Boolean.TRUE, inputParameter.getHeaders());
   }
 
   @Override
-  public Pair<Boolean, Object> cookiesValid(Map<String, Object> headers, String requestURI) {
+  public Pair<Boolean, Object> cookiesValid(InputParameter inputParameter) {
     //step1 read cookies from headers
     //step2 find file by openapiName
-    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI, URLS.VALIDATION);
+    Optional<OpenAPI> openAPIOpt = Optional.ofNullable(inputParameter.getOpenAPI());
     //step3 validation cookies
 
-    return Pair.of(Boolean.TRUE, headers);
+    return Pair.of(Boolean.TRUE, inputParameter.getHeaders());
   }
 
   @Override
-  public Pair<Boolean, Object> payloadValid(Map<String, Object> payload, String requestURI) {
+  public Pair<Boolean, Object> payloadValid(InputParameter inputParameter) {
     //step1 find file by openapiName
-    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(requestURI, URLS.VALIDATION);
+    Optional<OpenAPI> openAPIOpt = Optional.ofNullable(inputParameter.getOpenAPI());
     if(!openAPIOpt.isPresent()) {
       return Pair.of(Boolean.FALSE, Constant.FAIL);
     }
     OpenAPI openAPI = openAPIOpt.get();
     //step2 validation payload
-    ObjectSchema schema = (ObjectSchema) openAPI.getPaths().get(requestURI).getPost().getRequestBody().getContent().get("application/json").getSchema();
-    if(!ObjectUtils.isEmpty(payload) && !payload.isEmpty()) {
+    ObjectSchema schema = (ObjectSchema) openAPI.getPaths().get(inputParameter.getRequestURI()).getPost().getRequestBody().getContent().get("application/json").getSchema();
+    if(!ObjectUtils.isEmpty(inputParameter.getPayload()) && !inputParameter.getPayload().isEmpty()) {
       //validation required
       if(!ObjectUtils.isEmpty(schema.getRequired())) {
         List<String> requiredList = schema.getRequired().stream().filter(key -> {
@@ -80,18 +78,19 @@ public class ParameterValidationImpl implements ParameterValidation {
         }
       }
       //validation nullable
-      List<String> payloadList = payload.keySet().stream().filter(key -> {
+      List<String> payloadList = inputParameter.getPayload().keySet().stream().filter(key -> {
         if(ObjectUtils.isEmpty(schema.getProperties().get(key))) {
           return false;
         }
         String type = schema.getProperties().get(key).getType();
-        return !type.equals(payload.get(key).getClass().getTypeName());
+        String paramType = inputParameter.getPayload().get(key).getClass().getTypeName().replace("java.lang.", "").toLowerCase();
+        return !type.equals(paramType);
       }).collect(Collectors.toList());
       if(!ObjectUtils.isEmpty(payloadList) && payloadList.size() > 0) {
         //TODO return error message
         return Pair.of(Boolean.FALSE, Constant.FAIL);
       }
     }
-    return Pair.of(Boolean.TRUE, payload);
+    return Pair.of(Boolean.TRUE, inputParameter.getPayload());
   }
 }

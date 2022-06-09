@@ -14,6 +14,7 @@ public class ApiTest {
   public void apiRequest() throws Exception {
     String requestURI = "/withInvalidComposedModel";
     Map<String, Object> headers = new HashMap<>();
+    headers.put("header1", "h1");
     Map<String, Object> payload = new HashMap<>();
     payload.put("street", "nanjing east road");
     payload.put("city", "shanghai");

@@ -1,5 +1,6 @@
 package org.huasuoworld.models;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import java.util.Map;
 
 /**
@@ -13,6 +14,7 @@ public class InputParameter {
   private Map<String, Object> payload;
   private Map<String, Object> cookies;
   private String requestURI;
+  private OpenAPI openAPI;
 
   public Map<String, Object> getHeaders() {
     return headers;
@@ -44,5 +46,13 @@ public class InputParameter {
 
   public void setRequestURI(String requestURI) {
     this.requestURI = requestURI;
+  }
+
+  public OpenAPI getOpenAPI() {
+    return openAPI;
+  }
+
+  public void setOpenAPI(OpenAPI openAPI) {
+    this.openAPI = openAPI;
   }
 }

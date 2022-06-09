@@ -2,6 +2,7 @@ package org.huasuoworld.input;
 
 import com.sun.tools.javac.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.huasuoworld.models.InputParameter;
@@ -37,6 +38,11 @@ public class ApiRequest extends RequestMessageTransfer {
 
   public Map<String, Object> process() throws Exception {
     ParameterValidation instance = ParameterValidationImpl.getInstance();
+    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(getInputParameter().getRequestURI(), URLS.VALIDATION);
+    if(!openAPIOpt.isPresent()) {
+      return new HashMap<>();
+    }
+    getInputParameter().setOpenAPI(openAPIOpt.get());
     return securityValid(instance, getInputParameter()).cookieValid(instance, getInputParameter()).payloadValid(instance, getInputParameter()).runTask(getVerifiedParameter());
   }
 
@@ -44,7 +50,7 @@ public class ApiRequest extends RequestMessageTransfer {
     System.out.println("securityValid start");
     //TODO security
     //validation headers
-    Pair<Boolean, Object> headersValidPair = instance.headersValid(inputParameter.getHeaders(), inputParameter.getRequestURI());
+    Pair<Boolean, Object> headersValidPair = instance.headersValid(inputParameter);
     if(!headersValidPair.fst.booleanValue()) {
       throw new IllegalAccessException(headersValidPair.snd.toString());
     }
@@ -58,7 +64,7 @@ public class ApiRequest extends RequestMessageTransfer {
   public ApiRequest cookieValid(ParameterValidation instance, InputParameter inputParameter) throws Exception {
     System.out.println("cookieValid start");
     //validation cookies
-    Pair<Boolean, Object> cookiesValidPair = instance.cookiesValid(inputParameter.getHeaders(), inputParameter.getRequestURI());
+    Pair<Boolean, Object> cookiesValidPair = instance.cookiesValid(inputParameter);
     if(!cookiesValidPair.fst.booleanValue()) {
       throw new IllegalAccessException(cookiesValidPair.snd.toString());
     }
@@ -72,28 +78,25 @@ public class ApiRequest extends RequestMessageTransfer {
   private ApiRequest payloadValid(ParameterValidation instance, InputParameter inputParameter) throws Exception {
     System.out.println("payloadValid start");
     //validation payload
-    Pair<Boolean, Object> payloadValidPair = instance.payloadValid(inputParameter.getPayload(), inputParameter.getRequestURI());
+    Pair<Boolean, Object> payloadValidPair = instance.payloadValid(inputParameter);
     if(!payloadValidPair.fst.booleanValue()) {
       throw new IllegalAccessException(payloadValidPair.snd.toString());
     }
     //TODO
     Map<String, Object> payloadMap = (Map<String, Object>) payloadValidPair.snd;
     getVerifiedParameter().setPayload(payloadMap);
+    getVerifiedParameter().setRequestURI(inputParameter.getRequestURI());
+    getVerifiedParameter().setOpenAPI(inputParameter.getOpenAPI());
     System.out.println("payloadValid finish");
     return this;
   }
 
-  private Map<String, Object> runTask(InputParameter inputParameter) throws Exception {
+  private Map<String, Object> runTask(InputParameter verifiedParameter) throws Exception {
     System.out.println("runTask start");
-    Optional<OpenAPI> httpRequestOpenAPI = OpenAPIBuilder.getOpenAPIBuilder().openAPI(inputParameter.getRequestURI(), URLS.VALIDATION);
-    Optional<String> taskNameOpt = OpenAPIBuilder.getExtension(httpRequestOpenAPI, "tasks");
-    if(!taskNameOpt.isPresent()) {
-      throw new IllegalAccessException("taskName empty");
-    }
     //TODO multi task：parallel task、sequential task， default parallel task
     TaskRunner taskRunner = TaskRunnerImpl.getInstance();
     System.out.println("runTask process");
-    return taskRunner.run(inputParameter.getHeaders(), inputParameter.getCookies(), inputParameter.getPayload(), taskNameOpt.get());
+    return taskRunner.run(verifiedParameter);
   }
 
   public InputParameter getVerifiedParameter() {

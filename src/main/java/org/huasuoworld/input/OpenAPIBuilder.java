@@ -1,6 +1,7 @@
 package org.huasuoworld.input;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import java.util.HashMap;
@@ -59,17 +60,23 @@ public class OpenAPIBuilder {
     return Optional.ofNullable(openAPI);
   }
 
-  public static Optional<String> getExtension(Optional<OpenAPI> openAPIOpt, String extensionName) {
+  public static Optional<String> getVariables(Optional<OpenAPI> openAPIOpt, String extensionName) {
     if(!openAPIOpt.isPresent()) {
       return Optional.empty();
     }
     OpenAPI openAPI = openAPIOpt.get();
-    Object extension = openAPI.getInfo().getExtensions().get(extensionName);
+    Object extension = getVariables(openAPI).get(extensionName);
     return ObjectUtils.isEmpty(extension) ? Optional.empty() : Optional.ofNullable(extension.toString());
   }
 
-  public static Map<String, Object> getExtensions(OpenAPI openAPI) {
-    Map<String, Object> extensions = openAPI.getInfo().getExtensions();
-    return ObjectUtils.isEmpty(extensions) ? new HashMap<>() : extensions;
+  public static Map<String, Object> getVariables(OpenAPI openAPI) {
+    ServerVariables variables = openAPI.getServers().get(0).getVariables();
+    Map<String, Object> variablesMap = new HashMap<>();
+    if(!ObjectUtils.isEmpty(variables)) {
+      variables.keySet().stream().forEach(key -> {
+        variablesMap.put(key, variables.get(key).getDefault());
+      });
+    }
+    return variablesMap;
   }
 }

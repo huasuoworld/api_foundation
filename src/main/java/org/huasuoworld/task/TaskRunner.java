@@ -1,7 +1,8 @@
 package org.huasuoworld.task;
 
 import java.util.Map;
+import org.huasuoworld.models.InputParameter;
 
 public interface TaskRunner {
-  Map<String, Object> run(Map<String, Object> headers, Map<String, Object> cookies, Map<String, Object> payload, String taskName);
+  Map<String, Object> run(InputParameter verifiedParameter);
 }
