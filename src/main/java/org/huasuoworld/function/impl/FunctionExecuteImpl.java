@@ -43,11 +43,11 @@ public class FunctionExecuteImpl implements FunctionExecute {
       }
       String classPath = classPathOpt.get();
       FunctionFactory factory = FunctionFactory.getInstance();
-      //TODO dynamic package
-      Class<?> aClass = Class.forName(classPath);
-      java.util.function.Function executeFunction = (java.util.function.Function) aClass.getDeclaredConstructor().newInstance();
-      factory.put(function.getName(), executeFunction);
-      //TODO run function
+      if(!factory.getFunctionMap().containsKey(function.getName())) {
+        Class<?> aClass = Class.forName(classPath);
+        java.util.function.Function executeFunction = (java.util.function.Function) aClass.getDeclaredConstructor().newInstance();
+        factory.put(function.getName(), executeFunction);
+      }
       //step3 run function
       Map<String, Object> applyMap = (Map<String, Object>) factory.get(function.getName()).apply(function);
       return applyMap;
