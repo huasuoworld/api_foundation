@@ -9,6 +9,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.apache.commons.lang3.ObjectUtils;
+import org.huasuoworld.models.Resource;
 import org.huasuoworld.util.GsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,32 +39,37 @@ public class OkHttpClientUtil {
     return okHttpClientUtil;
   }
 
-  public Pair<Boolean, Map<String, Object>> httpGet(String url) {
+  public Pair<Boolean, Map<String, Object>> httpGet(Resource resource) {
     Request request = new Request.Builder()
-        .url(url)
+        .url(resource.getRequestURI())
         .build();
 
     try (Response response = okHttpClient.newCall(request).execute()) {
       if(response.isSuccessful()) {
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(response.body().toString()));
+        String responseBody = new String(response.body().bytes(), "UTF-8");
+        System.out.println(responseBody);
+        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
       } else {
         return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+      e.printStackTrace();
       return Pair.of(Boolean.FALSE, new HashMap<>());
     }
   }
 
-  public Pair<Boolean, Map<String, Object>> httpPost(String url, Map<String, Object> parameterMap) {
-    RequestBody body = RequestBody.create(GsonUtil.toJson(parameterMap), JSON);
+  public Pair<Boolean, Map<String, Object>> httpPost(Resource resource) {
+    RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
     Request request = new Request.Builder()
-        .url(url)
+        .url(resource.getRequestURI())
         .post(body)
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
       if(response.isSuccessful()) {
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(response.body().toString()));
+        String responseBody = new String(response.body().bytes(), "UTF-8");
+        System.out.println(responseBody);
+        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
       } else {
         return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
       }

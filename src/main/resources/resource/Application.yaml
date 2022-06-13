@@ -4,7 +4,12 @@ info:
   description: application info
   version: 1.0.0
 servers:
-  - url: http://localhost8080/api
+  - url: http://localhost:8081/api
+    variables:
+      /applications/get/requestBody/schemas:
+        default: '#/components/schemas/ApplicationVo'
+      /applications/post/requestBody/schemas:
+        default: '#/components/schemas/ApplicationVo'
 paths:
   /applications:
     get:

@@ -3,7 +3,7 @@ info:
   version: 1.0.0
 servers:
   - variables:
-      function:
-        default: TestFunction
       resource:
-        default: TestResource
+        default: Application/applications
+      function:
+        default: SpringDataJpaPagingFunction

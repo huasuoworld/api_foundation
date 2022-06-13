@@ -1,28 +1,23 @@
 openapi: 3.0.1
 info:
   title: testing source file
-  description: This is a sample server Petstore
+  description: application info
   version: 1.0.0
 servers:
   - url: http://localhost8080/api
 paths:
-  /applications/{id}:
-    post:
+  /applications:
+    get:
       requestBody:
-        $ref: '#/components/requestBodies/ApplicationBody'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationVo'
+        required: false
       responses:
         200:
           description: success!
 components:
-  requestBodies:
-    ApplicationBody:
-      description: A JSON object containing pet information
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ApplicationVo'
-        required: false
   schemas:
     Application:
       required:
@@ -40,14 +35,14 @@ components:
           example: test
         appCreated:
           type: date
-          example: 创建时间
+          example: 2022-06-10
         appModified:
           type: date
-          example: 更新时间
+          example: 2022-06-11
     ApplicationVo:
       allOf: # Combines the main `Application` schema with `ApplicationVo`-specific properties
         - $ref: '#/components/schemas/Application'
         - type: object
           # all other properties specific to a `Dog`
         - required:
-            - id
+            - appName

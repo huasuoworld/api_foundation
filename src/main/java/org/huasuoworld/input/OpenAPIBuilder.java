@@ -5,6 +5,8 @@ import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
@@ -78,5 +80,18 @@ public class OpenAPIBuilder {
       });
     }
     return variablesMap;
+  }
+
+  public static List<Map<String, Object>> getVariableList(OpenAPI openAPI) {
+    List<Map<String, Object>> variablesList = new LinkedList<>();
+    ServerVariables variables = openAPI.getServers().get(0).getVariables();
+    if(!ObjectUtils.isEmpty(variables)) {
+      variables.keySet().stream().forEach(key -> {
+        Map<String, Object> serverMap = new HashMap<>();
+        serverMap.put(key, variables.get(key).getDefault());
+        variablesList.add(serverMap);
+      });
+    }
+    return variablesList;
   }
 }

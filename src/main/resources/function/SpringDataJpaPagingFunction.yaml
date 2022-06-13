@@ -1,0 +1,35 @@
+openapi: 3.0.1
+info:
+  title: testing source file
+  description: application info
+  version: 1.0.0
+servers:
+  - variables:
+      classPath:
+        default: org.huasuoworld.function.util.SpringDataJpaPagingFunction
+      input:
+        default: '#/components/schemas/Application'
+      output:
+        default: '#/components/schemas/Application'
+components:
+  schemas:
+    Application:
+      required:
+        - id
+      type: object
+      properties:
+        appName:
+          type: string
+          example: test
+        appProfile:
+          type: string
+          example: test
+        appLabel:
+          type: string
+          example: test
+        appCreated:
+          type: date
+          example: 2022-06-10
+        appModified:
+          type: date
+          example: 2022-06-11

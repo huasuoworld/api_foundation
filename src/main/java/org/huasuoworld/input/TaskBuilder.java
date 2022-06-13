@@ -78,7 +78,7 @@ public class TaskBuilder {
     System.setProperty("taskName", "src/test/resources/task/TestTask.yaml");
     Optional<Tasks> tasksOpt = TaskBuilder.getTaskBuilder().fetchTask("taskName");
     if(tasksOpt.isPresent()) {
-      System.out.println(tasksOpt.get().getTasks().get(0).getFunction().getOpenapi().isPresent());
+      System.out.println(tasksOpt.get().getTasks().get(0).getFunction());
     } else {
       System.out.println("file is not found");
     }
