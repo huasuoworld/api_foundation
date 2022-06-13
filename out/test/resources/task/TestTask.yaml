@@ -1,8 +1,0 @@
-info:
-  version: 1.0.0
-tasks:
-  - task:
-      function:
-        name: TestFunction
-      resource:
-        name: TestResource
