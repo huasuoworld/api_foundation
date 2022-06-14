@@ -47,7 +47,7 @@ public class OkHttpClientUtil {
     try (Response response = okHttpClient.newCall(request).execute()) {
       if(response.isSuccessful()) {
         String responseBody = new String(response.body().bytes(), "UTF-8");
-        System.out.println(responseBody);
+        System.out.println("httpGet " + responseBody);
         return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
       } else {
         return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));

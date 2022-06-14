@@ -1,6 +1,8 @@
 package org.huasuoworld.input;
 
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 public enum URLS {
   VALIDATION("src/main/resources/validation/%s.yaml"),
@@ -8,6 +10,8 @@ public enum URLS {
   RESOURCE("src/main/resources/resource/%s.yaml"),
   TASK("src/main/resources/task/%s.yaml"),
   ;
+  public static final String OPENAPI = "openapi.";
+  public static final String URL = ".url";
   private String url;
   URLS(String url) {
     this.url = url;
@@ -18,12 +22,29 @@ public enum URLS {
   }
 
   public static Optional getUrlByFilename(URLS urls, String filename) {
+    String openApiValidation = System.getProperty(OPENAPI + URLS.VALIDATION.name().toLowerCase() + URL);
+    String openApiFunction = System.getProperty(OPENAPI + URLS.FUNCTION.name().toLowerCase() + URL);
+    String openApiResource = System.getProperty(OPENAPI + URLS.RESOURCE.name().toLowerCase() + URL);
+    String openApiTask = System.getProperty(OPENAPI + URLS.TASK.name().toLowerCase() + URL);
     switch (urls) {
-      case VALIDATION: return Optional.ofNullable(String.format(URLS.VALIDATION.getUrl(), filename));
-      case FUNCTION: return Optional.ofNullable(String.format(URLS.FUNCTION.getUrl(), filename));
-      case RESOURCE: return Optional.ofNullable(String.format(URLS.RESOURCE.getUrl(), filename));
-      case TASK: return Optional.ofNullable(String.format(URLS.TASK.getUrl(), filename));
+      case VALIDATION:
+        return validationPath(filename, openApiValidation, URLS.VALIDATION);
+      case FUNCTION:
+        return validationPath(filename, openApiFunction, URLS.FUNCTION);
+      case RESOURCE:
+        return validationPath(filename, openApiResource, URLS.RESOURCE);
+      case TASK:
+        return validationPath(filename, openApiTask, URLS.TASK);
       default: return Optional.empty();
+    }
+  }
+
+  @NotNull
+  private static Optional validationPath(String filename, String urlConfigPath, URLS validation) {
+    if (!StringUtils.isEmpty(urlConfigPath)) {
+      return Optional.ofNullable(String.format(urlConfigPath, filename));
+    } else {
+      return Optional.ofNullable(String.format(validation.getUrl(), filename));
     }
   }
 }

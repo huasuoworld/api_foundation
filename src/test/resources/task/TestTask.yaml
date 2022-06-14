@@ -1,8 +1,9 @@
+openapi: 3.0.1
 info:
   version: 1.0.0
-tasks:
-  - task:
-      function:
-        name: TestFunction
+servers:
+  - variables:
       resource:
-        name: TestResource
+        default: Application/applications
+      function:
+        default: SpringDataJpaPagingFunction

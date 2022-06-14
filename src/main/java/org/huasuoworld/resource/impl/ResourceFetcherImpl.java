@@ -80,7 +80,14 @@ public class ResourceFetcherImpl implements ResourceFetcher {
 //        System.out.println(properties.toString());
       } else {
         Map<String, Object> properties = schema.getProperties();
-//        System.out.println(properties.toString());
+        if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
+          Map<String, Object> payloadVerified = new HashMap<>();
+          properties.keySet().stream().forEach(key -> {
+            payloadVerified.put(key, payload.get(key));
+          });
+          //reload payload
+          resource.setPayload(payloadVerified);
+        }
       }
     }
 
@@ -96,12 +103,45 @@ public class ResourceFetcherImpl implements ResourceFetcher {
   }
 
   private Map<String, Object> post(Resource resource, Operation postOperation) {
+    System.out.println("resourceFetch post start");
+    //step1 filter parameter map
+    OpenAPI openAPI = resource.getOpenAPI();
     Map<String, Object> payload = resource.getPayload();
+    Optional<String> getSchemaOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), Schemas.getSchemaByOperation(Schemas.REQUEST_SCHEMA, Operations.GET.getName()));
+    if(getSchemaOpt.isPresent()) {
+      String getSchema = getSchemaOpt.get();
+      Schema schema = postOperation.getRequestBody().getContent().get("application/json").getSchema().$ref(getSchema);
+      if(!ObjectUtils.isEmpty(schema.getAllOf()) && !schema.getAllOf().isEmpty()) {
+        ComposedSchema composedSchema = (ComposedSchema) schema;
+        Map<String, Object> properties = composedSchema.getAllOf().get(0).getProperties();
+        if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
+          Map<String, Object> payloadVerified = new HashMap<>();
+          properties.keySet().stream().forEach(key -> {
+            payloadVerified.put(key, payload.get(key));
+          });
+          //reload payload
+          resource.setPayload(payloadVerified);
+        }
+//        System.out.println(properties.toString());
+      } else {
+        Map<String, Object> properties = schema.getProperties();
+        if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
+          Map<String, Object> payloadVerified = new HashMap<>();
+          properties.keySet().stream().forEach(key -> {
+            payloadVerified.put(key, payload.get(key));
+          });
+          //reload payload
+          resource.setPayload(payloadVerified);
+        }
+      }
+    }
     Pair<Boolean, Map<String, Object>> booleanMapPair = OkHttpClientUtil.okHttpClient().httpPost(resource);
     if(!booleanMapPair.fst) {
       //TODO log error
       payload.put("", "");
     }
+    System.out.println("resourceFetch post end");
+    System.out.println("resourceFetch end");
     payload.putAll(booleanMapPair.snd);
     return payload;
   }

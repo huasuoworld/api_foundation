@@ -44,17 +44,11 @@ public class OpenAPIBuilder {
     if(StringUtils.isEmpty(yamlResourcePath)) {
       return Optional.empty();
     }
-    String openapiNameEnv = System.getProperty("openapiName");
-    String openAPIUrl;
-    if(StringUtils.isNotEmpty(openapiNameEnv)) {
-      openAPIUrl = openapiNameEnv;
-    } else {
-      Optional<String> fileUrlOpt = URLS.getUrlByFilename(urls, yamlResourcePath);
-      if(!fileUrlOpt.isPresent()) {
-        return Optional.empty();
-      }
-      openAPIUrl = fileUrlOpt.get();
+    Optional<String> fileUrlOpt = URLS.getUrlByFilename(urls, yamlResourcePath);
+    if(!fileUrlOpt.isPresent()) {
+      return Optional.empty();
     }
+    String openAPIUrl = fileUrlOpt.get();
     ParseOptions options = new ParseOptions();
     options.setResolveFully(true);
     options.setResolveCombinators(true);

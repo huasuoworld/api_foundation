@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import org.huasuoworld.input.ApiRequest;
+import org.huasuoworld.input.URLS;
 import org.huasuoworld.util.GsonUtil;
 import org.junit.jupiter.api.Test;
 
@@ -14,12 +14,10 @@ public class ApiTest {
 
   @Test
   public void apiRequest() throws Exception {
-    Function f = new Function() {
-      @Override
-      public Object apply(Object o) {
-        return null;
-      }
-    };
+    System.setProperty(URLS.OPENAPI + "validation" + URLS.URL, "src/test/resources/validation/%s.yaml");
+    System.setProperty(URLS.OPENAPI + "function" + URLS.URL, "src/test/resources/function/%s.yaml");
+    System.setProperty(URLS.OPENAPI + "resource" + URLS.URL, "src/test/resources/resource/%s.yaml");
+    System.setProperty(URLS.OPENAPI + "task" + URLS.URL, "src/test/resources/task/%s.yaml");
     String requestURI = "/withInvalidComposedModel";
     Map<String, Object> headers = new HashMap<>();
     headers.put("header1", "h1");
