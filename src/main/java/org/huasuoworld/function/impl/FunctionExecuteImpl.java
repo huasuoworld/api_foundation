@@ -48,6 +48,9 @@ public class FunctionExecuteImpl implements FunctionExecute {
         java.util.function.Function executeFunction = (java.util.function.Function) aClass.getDeclaredConstructor().newInstance();
         factory.put(function.getName(), executeFunction);
       }
+      if(ObjectUtils.isEmpty(factory.get(function.getName()))) {
+        return new HashMap<>();
+      }
       //step3 run function
       Map<String, Object> applyMap = (Map<String, Object>) factory.get(function.getName()).apply(function);
       return applyMap;
