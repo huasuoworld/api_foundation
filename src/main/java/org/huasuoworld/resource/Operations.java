@@ -5,7 +5,10 @@ import org.apache.commons.lang3.ObjectUtils;
 
 public enum Operations {
   GET("get"),
-  POST("post")
+  POST("post"),
+  PUT("put"),
+  DELETE("delete"),
+  PATCH("patch")
   ;
 
   private String name;
@@ -23,6 +26,12 @@ public enum Operations {
       return Operations.GET;
     } else if(!ObjectUtils.isEmpty(pathItem.getPost())) {
       return Operations.POST;
+    } else if(!ObjectUtils.isEmpty(pathItem.getPut())) {
+      return Operations.PUT;
+    } else if(!ObjectUtils.isEmpty(pathItem.getDelete())) {
+      return Operations.DELETE;
+    } else if(!ObjectUtils.isEmpty(pathItem.getPatch())) {
+      return Operations.PATCH;
     } else {
       return Operations.GET;
     }

@@ -1,5 +1,6 @@
 package org.huasuoworld.http;
 
+import org.huasuoworld.resource.Operations;
 import org.huasuoworld.util.Pair;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,16 @@ public class OkHttpClientUtil {
     return okHttpClientUtil;
   }
 
+  public Pair<Boolean, Map<String, Object>> httpOption(Operations operations, Resource resource) {
+    switch (operations) {
+      case POST: return  httpPost(resource);
+      case PUT: return httpPut(resource);
+      case PATCH: return httpPatch(resource);
+      case DELETE: return httpDelete(resource);
+      default: return httpGet(resource);
+    }
+  }
+
   public Pair<Boolean, Map<String, Object>> httpGet(Resource resource) {
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
@@ -64,6 +75,66 @@ public class OkHttpClientUtil {
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
         .post(body)
+        .build();
+    try (Response response = okHttpClient.newCall(request).execute()) {
+      if(response.isSuccessful()) {
+        String responseBody = new String(response.body().bytes(), "UTF-8");
+        System.out.println(responseBody);
+        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+      } else {
+        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return Pair.of(Boolean.FALSE, new HashMap<>());
+    }
+  }
+
+  public Pair<Boolean, Map<String, Object>> httpPut(Resource resource) {
+    RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
+    Request request = new Request.Builder()
+        .url(resource.getRequestURI())
+        .put(body)
+        .build();
+    try (Response response = okHttpClient.newCall(request).execute()) {
+      if(response.isSuccessful()) {
+        String responseBody = new String(response.body().bytes(), "UTF-8");
+        System.out.println(responseBody);
+        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+      } else {
+        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return Pair.of(Boolean.FALSE, new HashMap<>());
+    }
+  }
+
+  public Pair<Boolean, Map<String, Object>> httpPatch(Resource resource) {
+    RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
+    Request request = new Request.Builder()
+        .url(resource.getRequestURI())
+        .patch(body)
+        .build();
+    try (Response response = okHttpClient.newCall(request).execute()) {
+      if(response.isSuccessful()) {
+        String responseBody = new String(response.body().bytes(), "UTF-8");
+        System.out.println(responseBody);
+        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+      } else {
+        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return Pair.of(Boolean.FALSE, new HashMap<>());
+    }
+  }
+
+  public Pair<Boolean, Map<String, Object>> httpDelete(Resource resource) {
+    RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
+    Request request = new Request.Builder()
+        .url(resource.getRequestURI())
+        .delete(body)
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
       if(response.isSuccessful()) {
