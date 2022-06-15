@@ -1,5 +1,8 @@
 package org.huasuoworld.validation.impl;
 
+import io.swagger.v3.oas.models.PathItem;
+import org.huasuoworld.input.OpenAPIBuilder;
+import org.huasuoworld.resource.Operations;
 import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -61,7 +64,7 @@ public class ParameterValidationImpl implements ParameterValidation {
     }
     OpenAPI openAPI = openAPIOpt.get();
     //step2 validation payload
-    ObjectSchema schema = (ObjectSchema) openAPI.getPaths().get(inputParameter.getRequestURI()).getPost().getRequestBody().getContent().get("application/json").getSchema();
+    ObjectSchema schema = OpenAPIBuilder.fetchSchema(openAPI, inputParameter.getRequestURI());
     if(!ObjectUtils.isEmpty(inputParameter.getPayload()) && !inputParameter.getPayload().isEmpty()) {
       //validation required
       if(!ObjectUtils.isEmpty(schema.getRequired())) {

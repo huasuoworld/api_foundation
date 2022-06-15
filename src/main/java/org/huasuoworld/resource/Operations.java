@@ -21,7 +21,7 @@ public enum Operations {
   public static Operations operation(PathItem pathItem) {
     if(!ObjectUtils.isEmpty(pathItem.getGet())) {
       return Operations.GET;
-    } else if(!ObjectUtils.isEmpty(pathItem.getGet())) {
+    } else if(!ObjectUtils.isEmpty(pathItem.getPost())) {
       return Operations.POST;
     } else {
       return Operations.GET;

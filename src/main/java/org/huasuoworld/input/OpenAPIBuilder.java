@@ -1,6 +1,8 @@
 package org.huasuoworld.input;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
@@ -13,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.huasuoworld.resource.Operations;
 
 /**
  * @author: huacailiang
@@ -125,5 +128,13 @@ public class OpenAPIBuilder {
 
   public static String getPathName(String resourceName) {
     return resourceName.split("/")[1];
+  }
+
+  public static ObjectSchema fetchSchema(OpenAPI openAPI, String requestURI) {
+    PathItem pathItem = openAPI.getPaths().get(requestURI);
+    switch (Operations.operation(pathItem)) {
+      case POST: return (ObjectSchema) pathItem.getPost().getRequestBody().getContent().get("application/json").getSchema();
+      default: return (ObjectSchema) pathItem.getGet().getRequestBody().getContent().get("application/json").getSchema();
+    }
   }
 }
