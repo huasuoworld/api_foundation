@@ -4,11 +4,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -87,5 +89,41 @@ public class OpenAPIBuilder {
       });
     }
     return variablesList;
+  }
+
+  public static List<String> getVariableResourcesEnums(OpenAPI openAPI) {
+    String resources = "resources";
+    List<String> variableList = new ArrayList<>();
+    ServerVariables variables = openAPI.getServers().get(0).getVariables();
+    if(!ObjectUtils.isEmpty(variables)) {
+      List<List<String>> resourcesKeys = variables.keySet().stream()
+          .filter(variableKey -> variableKey.equals(resources))
+          .map(variableKey -> variables.get(variableKey).getEnum()).collect(Collectors.toList());
+      if(!ObjectUtils.isEmpty(resourcesKeys)) {
+        Optional<List<String>> resourcesKey = resourcesKeys.stream().findFirst();
+        if(resourcesKey.isPresent()) {
+          return resourcesKey.get();
+        }
+      }
+    }
+    return variableList;
+  }
+
+  public static Boolean isFunction(String resourceName) {
+    if(StringUtils.isEmpty(resourceName)) {
+      return Boolean.TRUE;
+    } else if(resourceName.indexOf("/") > 0) {
+      return Boolean.FALSE;
+    } else {
+      return Boolean.TRUE;
+    }
+  }
+
+  public static String getResourceName(String resourceName) {
+    return resourceName.split("/")[0];
+  }
+
+  public static String getPathName(String resourceName) {
+    return resourceName.split("/")[1];
   }
 }

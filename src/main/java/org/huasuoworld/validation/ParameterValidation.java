@@ -1,6 +1,6 @@
 package org.huasuoworld.validation;
 
-import com.sun.tools.javac.util.Pair;
+import org.huasuoworld.util.Pair;
 import org.huasuoworld.models.InputParameter;
 
 public interface ParameterValidation {

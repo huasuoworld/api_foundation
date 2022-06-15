@@ -4,6 +4,7 @@ plugins {
 
 group 'org.huasuoworld'
 version '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
@@ -12,14 +13,14 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    testImplementation 'io.swagger.parser.v3:swagger-parser:2.0.32'
-    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
+    implementation 'io.swagger.parser.v3:swagger-parser:2.0.32'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
     // define a BOM and its version
-    testImplementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
     // define any required OkHttp artifacts without version
-    testImplementation("com.squareup.okhttp3:okhttp")
-    testImplementation("com.squareup.okhttp3:logging-interceptor")
-    testImplementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation("com.google.code.gson:gson:2.9.0")
 }
 
 test {

@@ -1,6 +1,5 @@
 package org.huasuoworld.resource.impl;
 
-import com.sun.tools.javac.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -17,6 +16,7 @@ import org.huasuoworld.models.Resource;
 import org.huasuoworld.resource.Operations;
 import org.huasuoworld.resource.ResourceFetcher;
 import org.huasuoworld.resource.Schemas;
+import org.huasuoworld.util.Pair;
 
 /**
  * @author: huacailiang
@@ -156,13 +156,5 @@ public class ResourceFetcherImpl implements ResourceFetcher {
 
   private Map<String, Object> update(Resource resource) {
     return null;
-  }
-
-  public static String getResourceName(String resourceName) {
-    return resourceName.split("/")[0];
-  }
-
-  public static String getPathName(String resourceName) {
-    return resourceName.split("/")[1];
   }
 }

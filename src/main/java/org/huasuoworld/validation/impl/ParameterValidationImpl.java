@@ -1,6 +1,6 @@
 package org.huasuoworld.validation.impl;
 
-import com.sun.tools.javac.util.Pair;
+import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import java.util.List;

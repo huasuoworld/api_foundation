@@ -1,6 +1,6 @@
 package org.huasuoworld.input;
 
-import com.sun.tools.javac.util.Pair;
+import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import java.util.HashMap;
 import java.util.Map;

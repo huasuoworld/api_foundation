@@ -1,6 +1,6 @@
 package org.huasuoworld.http;
 
-import com.sun.tools.javac.util.Pair;
+import org.huasuoworld.util.Pair;
 import java.util.HashMap;
 import java.util.Map;
 import okhttp3.MediaType;
