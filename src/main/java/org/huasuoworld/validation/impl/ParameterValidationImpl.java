@@ -1,8 +1,12 @@
 package org.huasuoworld.validation.impl;
 
 import io.swagger.v3.oas.models.PathItem;
+import java.util.Map;
 import org.huasuoworld.input.OpenAPIBuilder;
 import org.huasuoworld.resource.Operations;
+import org.huasuoworld.task.TaskRunner;
+import org.huasuoworld.task.TaskType;
+import org.huasuoworld.task.impl.TaskRunnerImpl;
 import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -39,10 +43,11 @@ public class ParameterValidationImpl implements ParameterValidation {
 
   @Override
   public Pair<Boolean, Object> headersValid(InputParameter inputParameter) {
-    //step1 find file by openapiName
-    Optional<OpenAPI> openAPIOpt = Optional.ofNullable(inputParameter.getOpenAPI());
+    //step1 run security task
+    TaskRunner taskRunner = TaskRunnerImpl.getInstance();
+    Map<String, Object> headersValidMap = taskRunner.run(inputParameter, TaskType.SECURITY);
     //step2 validation headers
-    return Pair.of(Boolean.TRUE, inputParameter.getHeaders());
+    return Pair.of(Boolean.TRUE, headersValidMap);
   }
 
   @Override

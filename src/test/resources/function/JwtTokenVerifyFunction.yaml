@@ -1,0 +1,23 @@
+openapi: 3.0.1
+info:
+  title: testing source file
+  description: application info
+  version: 1.0.0
+servers:
+  - variables:
+      classPath:
+        default: org.huasuoworld.security.JwtTokenVerify
+      input:
+        default: '#/components/schemas/AppToken'
+      output:
+        default: '#/components/schemas/AppToken'
+components:
+  schemas:
+    AppToken:
+      required:
+        - token
+      type: object
+      properties:
+        token:
+          type: string
+          example: test

@@ -20,7 +20,7 @@ public class ApiTest {
     System.setProperty(URLS.OPENAPI + "task" + URLS.URL, "src/test/resources/task/%s.yaml");
     String requestURI = "/withInvalidComposedModel";
     Map<String, Object> headers = new HashMap<>();
-    headers.put("header1", "h1");
+    headers.put("token", "h1");
     Map<String, Object> payload = new HashMap<>();
     payload.put("street", "nanjing east road");
     payload.put("city", "shanghai");

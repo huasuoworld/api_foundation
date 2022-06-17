@@ -14,6 +14,7 @@ import org.huasuoworld.models.InputParameter;
 import org.huasuoworld.models.Resource;
 import org.huasuoworld.resource.impl.ResourceFetcherImpl;
 import org.huasuoworld.task.TaskRunner;
+import org.huasuoworld.task.TaskType;
 import org.huasuoworld.util.GsonUtil;
 
 /**
@@ -42,11 +43,11 @@ public class TaskRunnerImpl implements TaskRunner {
   }
 
   @Override
-  public Map<String, Object> run(InputParameter verifiedParameter) {
+  public Map<String, Object> run(InputParameter verifiedParameter, TaskType taskType) {
     Map<String, Object> responseMap = new HashMap<>();
     //step1 find file by taskName
     try {
-      Optional<String> taskNameOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(verifiedParameter.getOpenAPI()), "tasks");
+      Optional<String> taskNameOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(verifiedParameter.getOpenAPI()), taskType.getType());
       if(!taskNameOpt.isPresent()) {
         return responseMap;
       }
@@ -68,9 +69,13 @@ public class TaskRunnerImpl implements TaskRunner {
             if(funOpenAPIOpt.isPresent()) {
               OpenAPI functionOpenAPI = funOpenAPIOpt.get();
               Map<String, Object> parameter = new HashMap<>();
-              parameter.putAll(verifiedParameter.getHeaders());
+              if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
+                parameter.putAll(verifiedParameter.getHeaders());
+              }
               parameter.putAll(verifiedParameter.getPayload());
-              parameter.putAll(verifiedParameter.getCookies());
+              if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
+                parameter.putAll(verifiedParameter.getCookies());
+              }
               if(!responseMap.isEmpty()) {
                 parameter.putAll(responseMap);
               }
@@ -88,9 +93,13 @@ public class TaskRunnerImpl implements TaskRunner {
             Optional<OpenAPI> resOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(resourceName, URLS.RESOURCE);
             if(resOpenAPIOpt.isPresent()) {
               Map<String, Object> parameter = new HashMap<>();
-              parameter.putAll(verifiedParameter.getHeaders());
+              if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
+                parameter.putAll(verifiedParameter.getHeaders());
+              }
               parameter.putAll(verifiedParameter.getPayload());
-              parameter.putAll(verifiedParameter.getCookies());
+              if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
+                parameter.putAll(verifiedParameter.getCookies());
+              }
               if(!responseMap.isEmpty()) {
                 parameter.putAll(responseMap);
               }

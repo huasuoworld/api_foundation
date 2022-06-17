@@ -1,5 +1,6 @@
 package org.huasuoworld.input;
 
+import org.huasuoworld.task.TaskType;
 import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import java.util.HashMap;
@@ -96,7 +97,7 @@ public class ApiRequest extends RequestMessageTransfer {
     //TODO multi task：parallel task、sequential task， default parallel task
     TaskRunner taskRunner = TaskRunnerImpl.getInstance();
     System.out.println("runTask process");
-    return taskRunner.run(verifiedParameter);
+    return taskRunner.run(verifiedParameter, TaskType.TASKS);
   }
 
   public InputParameter getVerifiedParameter() {
