@@ -52,73 +52,73 @@ public class TaskRunnerImpl implements TaskRunner {
         return responseMap;
       }
       Optional<OpenAPI> taskOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(taskNameOpt.get(), URLS.TASK);
-      if(taskOpenAPIOpt.isPresent()) {
-        List<String> variableResourcesEnums = OpenAPIBuilder.getVariableResourcesEnums(taskOpenAPIOpt.get());
+      if(!taskOpenAPIOpt.isPresent()) {
+        return responseMap;
+      }
+      List<String> variableResourcesEnums = OpenAPIBuilder.getVariableResourcesEnums(taskOpenAPIOpt.get());
 //        List<Map<String, Object>> variableList = OpenAPIBuilder.getVariableList(taskOpenAPIOpt.get());
-        for(String variable: variableResourcesEnums) {
-          System.out.println(GsonUtil.toJson(variable));
-          if(OpenAPIBuilder.isFunction(variable)) {
-            System.out.println("task run function start");
-            //step2 fetch function
+      for(String variable: variableResourcesEnums) {
+        System.out.println(GsonUtil.toJson(variable));
+        if(OpenAPIBuilder.isFunction(variable)) {
+          System.out.println("task run function start");
+          //step2 fetch function
 //            Optional<String> functionOpt = OpenAPIBuilder.getVariables(taskOpenAPIOpt, FUNCTION);
-            //run function or fetch resource
-            //run function
-            //package function
-            String functionName = variable;
-            Optional<OpenAPI> funOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(functionName, URLS.FUNCTION);
-            if(funOpenAPIOpt.isPresent()) {
-              OpenAPI functionOpenAPI = funOpenAPIOpt.get();
-              Map<String, Object> parameter = new HashMap<>();
-              if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
-                parameter.putAll(verifiedParameter.getHeaders());
-              }
-              parameter.putAll(verifiedParameter.getPayload());
-              if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
-                parameter.putAll(verifiedParameter.getCookies());
-              }
-              if(!responseMap.isEmpty()) {
-                parameter.putAll(responseMap);
-              }
-              Function function = new Function();
-              function.name(functionName).payload(parameter).openAPI(functionOpenAPI);
-              Map<String, Object> functionApplyMap = FunctionExecuteImpl.getInstance().exec(function);
-              responseMap = functionApplyMap;
+          //run function or fetch resource
+          //run function
+          //package function
+          String functionName = variable;
+          Optional<OpenAPI> funOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(functionName, URLS.FUNCTION);
+          if(funOpenAPIOpt.isPresent()) {
+            OpenAPI functionOpenAPI = funOpenAPIOpt.get();
+            Map<String, Object> parameter = new HashMap<>();
+            if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
+              parameter.putAll(verifiedParameter.getHeaders());
             }
-            System.out.println("task run function end");
-          } else {
-            System.out.println("task run resource start");
-            //step2 fetch resource
-            //package resource
-            String resourceName = OpenAPIBuilder.getResourceName(variable);
-            Optional<OpenAPI> resOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(resourceName, URLS.RESOURCE);
-            if(resOpenAPIOpt.isPresent()) {
-              Map<String, Object> parameter = new HashMap<>();
-              if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
-                parameter.putAll(verifiedParameter.getHeaders());
-              }
-              parameter.putAll(verifiedParameter.getPayload());
-              if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
-                parameter.putAll(verifiedParameter.getCookies());
-              }
-              if(!responseMap.isEmpty()) {
-                parameter.putAll(responseMap);
-              }
-              Resource resource = new Resource();
-              resource.name(resourceName).payload(parameter)
-                  .requestURI(OpenAPIBuilder.getPathName(variable)).openAPI(resOpenAPIOpt.get());
-              //TODO run resource
-              //step3 run resource
-              Map<String, Object> httpResponseMap = ResourceFetcherImpl.getInstance().resourceFetch(resource);
-              responseMap = httpResponseMap;
+            parameter.putAll(verifiedParameter.getPayload());
+            if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
+              parameter.putAll(verifiedParameter.getCookies());
             }
-            System.out.println("task run resource end");
+            if(!responseMap.isEmpty()) {
+              parameter.putAll(responseMap);
+            }
+            Function function = new Function();
+            function.name(functionName).payload(parameter).openAPI(functionOpenAPI);
+            Map<String, Object> functionApplyMap = FunctionExecuteImpl.getInstance().exec(function);
+            responseMap = functionApplyMap;
           }
+          System.out.println("task run function end");
+        } else {
+          System.out.println("task run resource start");
+          //step2 fetch resource
+          //package resource
+          String resourceName = OpenAPIBuilder.getResourceName(variable);
+          Optional<OpenAPI> resOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(resourceName, URLS.RESOURCE);
+          if(resOpenAPIOpt.isPresent()) {
+            Map<String, Object> parameter = new HashMap<>();
+            if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
+              parameter.putAll(verifiedParameter.getHeaders());
+            }
+            parameter.putAll(verifiedParameter.getPayload());
+            if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
+              parameter.putAll(verifiedParameter.getCookies());
+            }
+            if(!responseMap.isEmpty()) {
+              parameter.putAll(responseMap);
+            }
+            Resource resource = new Resource();
+            resource.name(resourceName).payload(parameter)
+                .requestURI(OpenAPIBuilder.getPathName(variable)).openAPI(resOpenAPIOpt.get());
+            //TODO run resource
+            //step3 run resource
+            Map<String, Object> httpResponseMap = ResourceFetcherImpl.getInstance().resourceFetch(resource);
+            responseMap = httpResponseMap;
+          }
+          System.out.println("task run resource end");
         }
       }
+      return responseMap;
     } catch (Exception e) {
       e.printStackTrace();
-    } finally {
-      //step4 response
       return responseMap;
     }
   }
