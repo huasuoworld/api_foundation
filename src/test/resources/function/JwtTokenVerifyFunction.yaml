@@ -8,9 +8,9 @@ servers:
       classPath:
         default: org.huasuoworld.security.JwtTokenVerify
       input:
-        default: '#/components/schemas/AppToken'
+        default: 'AppToken'
       output:
-        default: '#/components/schemas/AppToken'
+        default: 'AppToken'
 components:
   schemas:
     AppToken:

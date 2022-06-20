@@ -8,9 +8,9 @@ servers:
       classPath:
         default: org.huasuoworld.function.util.SpringDataJpaPagingFunction
       input:
-        default: '#/components/schemas/Application'
+        default: 'Application'
       output:
-        default: '#/components/schemas/Application'
+        default: 'Application'
 components:
   schemas:
     Application:
