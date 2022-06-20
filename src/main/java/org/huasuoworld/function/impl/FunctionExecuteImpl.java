@@ -39,16 +39,18 @@ public class FunctionExecuteImpl implements FunctionExecute {
 
   @Override
   public Map<String, Object> exec(Function function) {
-    Map<String, Object> executeMap = new HashMap<>();
+    Map<String, Object> payload = function.getPayload();
     try {
+      if(!ObjectUtils.isEmpty(function.getPayload()) && !function.getPayload().isEmpty()) {
+        return payload;
+      }
       OpenAPI openAPI = function.getOpenAPI();
       Optional<String> inputOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), "input");
       if(!inputOpt.isPresent()) {
-        return executeMap;
+        return payload;
       }
       Schema schema = openAPI.getComponents().getSchemas().get(inputOpt.get());
       //step1 filter parameter map
-      Map<String, Object> payload = function.getPayload();
       if(!ObjectUtils.isEmpty(schema.getAllOf()) && !schema.getAllOf().isEmpty()) {
         ComposedSchema composedSchema = (ComposedSchema) schema;
         Map<String, Object> properties = composedSchema.getAllOf().get(0).getProperties();
@@ -73,7 +75,7 @@ public class FunctionExecuteImpl implements FunctionExecute {
       }
       Optional<String> classPathOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), "classPath");
       if(!classPathOpt.isPresent()) {
-        return executeMap;
+        return payload;
       }
       String classPath = classPathOpt.get();
       FunctionFactory factory = FunctionFactory.getInstance();
@@ -83,14 +85,15 @@ public class FunctionExecuteImpl implements FunctionExecute {
         factory.put(function.getName(), executeFunction);
       }
       if(ObjectUtils.isEmpty(factory.get(function.getName()))) {
-        return executeMap;
+        return payload;
       }
       //step3 run function
       Map<String, Object> applyMap = (Map<String, Object>) factory.get(function.getName()).apply(function);
-      return applyMap;
+      payload.putAll(applyMap);
+      return payload;
     } catch (Exception e) {
       e.printStackTrace();
-      return executeMap;
+      return payload;
     }
   }
 }
