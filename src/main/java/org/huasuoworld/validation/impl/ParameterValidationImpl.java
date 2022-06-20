@@ -7,6 +7,7 @@ import org.huasuoworld.resource.Operations;
 import org.huasuoworld.task.TaskRunner;
 import org.huasuoworld.task.TaskType;
 import org.huasuoworld.task.impl.TaskRunnerImpl;
+import org.huasuoworld.util.GsonUtil;
 import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -82,7 +83,7 @@ public class ParameterValidationImpl implements ParameterValidation {
         }).collect(Collectors.toList());
         if(!ObjectUtils.isEmpty(requiredList) && requiredList.size() > 0) {
           //TODO return error message
-          return Pair.of(Boolean.FALSE, Constant.FAIL);
+          return Pair.of(Boolean.FALSE, "parameter required validation fail, " + GsonUtil.toJson(requiredList) + " not be empty");
         }
       }
       //validation nullable
@@ -96,7 +97,7 @@ public class ParameterValidationImpl implements ParameterValidation {
       }).collect(Collectors.toList());
       if(!ObjectUtils.isEmpty(payloadList) && payloadList.size() > 0) {
         //TODO return error message
-        return Pair.of(Boolean.FALSE, Constant.FAIL);
+        return Pair.of(Boolean.FALSE, "parameter type validation fail, " + GsonUtil.toJson(payloadList) + " type not equal");
       }
     }
     return Pair.of(Boolean.TRUE, inputParameter.getPayload());
