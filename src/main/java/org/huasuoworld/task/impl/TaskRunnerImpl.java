@@ -74,17 +74,19 @@ public class TaskRunnerImpl implements TaskRunner {
             if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
               parameter.putAll(verifiedParameter.getHeaders());
             }
-            parameter.putAll(verifiedParameter.getPayload());
             if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
               parameter.putAll(verifiedParameter.getCookies());
             }
+            parameter.putAll(verifiedParameter.getPayload());
             if(!responseMap.isEmpty()) {
               parameter.putAll(responseMap);
             }
             Function function = new Function();
             function.name(functionName).payload(parameter).openAPI(functionOpenAPI);
             Map<String, Object> functionApplyMap = FunctionExecuteImpl.getInstance().exec(function);
-            responseMap = functionApplyMap;
+            if(!ObjectUtils.isEmpty(functionApplyMap) && !functionApplyMap.isEmpty()) {
+              responseMap.putAll(functionApplyMap);
+            }
           }
           System.out.println("task run function end");
         } else {
@@ -98,10 +100,10 @@ public class TaskRunnerImpl implements TaskRunner {
             if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
               parameter.putAll(verifiedParameter.getHeaders());
             }
-            parameter.putAll(verifiedParameter.getPayload());
             if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
               parameter.putAll(verifiedParameter.getCookies());
             }
+            parameter.putAll(verifiedParameter.getPayload());
             if(!responseMap.isEmpty()) {
               parameter.putAll(responseMap);
             }
@@ -111,7 +113,9 @@ public class TaskRunnerImpl implements TaskRunner {
             //TODO run resource
             //step3 run resource
             Map<String, Object> httpResponseMap = ResourceFetcherImpl.getInstance().resourceFetch(resource);
-            responseMap = httpResponseMap;
+            if(!ObjectUtils.isEmpty(httpResponseMap) && !httpResponseMap.isEmpty()) {
+              responseMap.putAll(httpResponseMap);
+            }
           }
           System.out.println("task run resource end");
         }

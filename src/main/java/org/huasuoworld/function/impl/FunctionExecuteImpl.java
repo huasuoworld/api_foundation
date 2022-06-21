@@ -39,15 +39,15 @@ public class FunctionExecuteImpl implements FunctionExecute {
 
   @Override
   public Map<String, Object> exec(Function function) {
-    Map<String, Object> payload = function.getPayload();
+    Map<String, Object> executeMap = new HashMap<>();
     try {
-      if(!ObjectUtils.isEmpty(function.getPayload()) && !function.getPayload().isEmpty()) {
-        return payload;
+      if(ObjectUtils.isEmpty(function.getPayload()) || function.getPayload().isEmpty()) {
+        return executeMap;
       }
       OpenAPI openAPI = function.getOpenAPI();
       Optional<String> inputOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), "input");
       if(!inputOpt.isPresent()) {
-        return payload;
+        return executeMap;
       }
       Schema schema = openAPI.getComponents().getSchemas().get(inputOpt.get());
       //step1 filter parameter map
@@ -57,7 +57,7 @@ public class FunctionExecuteImpl implements FunctionExecute {
         if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
           Map<String, Object> payloadVerified = new HashMap<>();
           properties.keySet().stream().forEach(key -> {
-            payloadVerified.put(key, payload.get(key));
+            payloadVerified.put(key, function.getPayload().get(key));
           });
           //reload payload
           function.setPayload(payloadVerified);
@@ -67,7 +67,7 @@ public class FunctionExecuteImpl implements FunctionExecute {
         if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
           Map<String, Object> payloadVerified = new HashMap<>();
           properties.keySet().stream().forEach(key -> {
-            payloadVerified.put(key, payload.get(key));
+            payloadVerified.put(key, function.getPayload().get(key));
           });
           //reload payload
           function.setPayload(payloadVerified);
@@ -75,7 +75,7 @@ public class FunctionExecuteImpl implements FunctionExecute {
       }
       Optional<String> classPathOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), "classPath");
       if(!classPathOpt.isPresent()) {
-        return payload;
+        return executeMap;
       }
       String classPath = classPathOpt.get();
       FunctionFactory factory = FunctionFactory.getInstance();
@@ -85,15 +85,14 @@ public class FunctionExecuteImpl implements FunctionExecute {
         factory.put(function.getName(), executeFunction);
       }
       if(ObjectUtils.isEmpty(factory.get(function.getName()))) {
-        return payload;
+        return executeMap;
       }
       //step3 run function
       Map<String, Object> applyMap = (Map<String, Object>) factory.get(function.getName()).apply(function);
-      payload.putAll(applyMap);
-      return payload;
+      return applyMap;
     } catch (Exception e) {
       e.printStackTrace();
-      return payload;
+      return executeMap;
     }
   }
 }

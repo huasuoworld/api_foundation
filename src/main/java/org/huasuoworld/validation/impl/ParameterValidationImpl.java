@@ -48,6 +48,7 @@ public class ParameterValidationImpl implements ParameterValidation {
     TaskRunner taskRunner = TaskRunnerImpl.getInstance();
     Map<String, Object> headersValidMap = taskRunner.run(inputParameter, TaskType.SECURITY);
     //step2 validation headers
+    inputParameter.getHeaders().putAll(headersValidMap);
     return Pair.of(Boolean.TRUE, headersValidMap);
   }
 

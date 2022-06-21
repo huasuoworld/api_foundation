@@ -28,8 +28,6 @@ public class SpringDataJpaPagingFunction implements Function<org.huasuoworld.mod
       payload.remove("_links");
     }
     Map<String, Object> embeddedMap = GsonUtil.parseMaps(GsonUtil.toJson(embeddedOpt.get()));
-    String dataKey = embeddedMap.keySet().stream().findFirst().get();
-    payload.put(dataKey, embeddedMap.get(dataKey));
-    return payload;
+    return embeddedMap;
   }
 }

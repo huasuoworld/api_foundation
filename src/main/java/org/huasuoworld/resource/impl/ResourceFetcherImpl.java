@@ -104,14 +104,14 @@ public class ResourceFetcherImpl implements ResourceFetcher {
   private Map<String, Object> options(Resource resource, Operations operations, Schema schema) {
     System.out.println("resourceFetch get start");
     //step1 filter parameter map
-    Map<String, Object> payload = resource.getPayload();
+    Map<String, Object> resourceMap = new HashMap<>();
     if(!ObjectUtils.isEmpty(schema.getAllOf()) && !schema.getAllOf().isEmpty()) {
       ComposedSchema composedSchema = (ComposedSchema) schema;
       Map<String, Object> properties = composedSchema.getAllOf().get(0).getProperties();
       if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
         Map<String, Object> payloadVerified = new HashMap<>();
         properties.keySet().stream().forEach(key -> {
-          payloadVerified.put(key, payload.get(key));
+          payloadVerified.put(key, resource.getPayload().get(key));
         });
         //reload payload
         resource.setPayload(payloadVerified);
@@ -121,7 +121,7 @@ public class ResourceFetcherImpl implements ResourceFetcher {
       if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
         Map<String, Object> payloadVerified = new HashMap<>();
         properties.keySet().stream().forEach(key -> {
-          payloadVerified.put(key, payload.get(key));
+          payloadVerified.put(key, resource.getPayload().get(key));
         });
         //reload payload
         resource.setPayload(payloadVerified);
@@ -131,12 +131,12 @@ public class ResourceFetcherImpl implements ResourceFetcher {
     Pair<Boolean, Map<String, Object>> booleanMapPair = OkHttpClientUtil.okHttpClient().httpOption(operations, resource);
     if(!booleanMapPair.fst) {
       //TODO log error
-      payload.put("", "");
+      resourceMap.put("", "");
     }
-    payload.putAll(booleanMapPair.snd);
+    resourceMap.putAll(booleanMapPair.snd);
     System.out.println("resourceFetch get end");
     System.out.println("resourceFetch end");
-    return payload;
+    return resourceMap;
   }
 
   private Map<String, Object> put(Resource resource) {
