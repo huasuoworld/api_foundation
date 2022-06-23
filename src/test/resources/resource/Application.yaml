@@ -2,10 +2,12 @@ openapi: 3.0.1
 info:
   title: testing source file
   description: application info
-  version: 1.0.0
+  version: resource
 servers:
   - url: http://localhost:8081/api
     variables:
+      resourceName:
+        default: Application
       /applications/get/requestBody/schemas:
         default: '#/components/schemas/ApplicationVo'
       /applications/post/requestBody/schemas:

@@ -3,14 +3,14 @@ info:
   title: testing source file
   description: This is a sample server Petstore
   termsOfService: http://swagger.io/terms/
-  version: 1.0.0
+  version: validation
 servers:
   - url: http://petstore.swagger.io/api
     variables:
       security:
-        default: SecurityTask
+        default: src/test/resources/task/SecurityTask
       tasks:
-        default: TestTask
+        default: src/test/resources/task/TestTask.yaml
 paths:
   /withInvalidComposedModel:
     post:

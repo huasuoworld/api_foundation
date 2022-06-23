@@ -2,9 +2,11 @@ openapi: 3.0.1
 info:
   title: testing source file
   description: application info
-  version: 1.0.0
+  version: function
 servers:
   - variables:
+      functionName:
+        default: JwtTokenVerify
       classPath:
         default: org.huasuoworld.security.JwtTokenVerify
       input:

@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.huasuoworld.input.ApiRequest;
 import org.huasuoworld.input.URLS;
@@ -14,6 +16,9 @@ public class ApiTest {
 
   @Test
   public void apiRequest() throws Exception {
+    String validationPath = "src/test/resources/validation/withInvalidComposedModel.yaml";
+    List<String> validationPaths = new ArrayList<>();
+    validationPaths.add(validationPath);
     System.setProperty(URLS.OPENAPI + "validation" + URLS.URL, "src/test/resources/validation/%s.yaml");
     System.setProperty(URLS.OPENAPI + "function" + URLS.URL, "src/test/resources/function/%s.yaml");
     System.setProperty(URLS.OPENAPI + "resource" + URLS.URL, "src/test/resources/resource/%s.yaml");
@@ -27,7 +32,7 @@ public class ApiTest {
     payload.put("state", "china");
     payload.put("zip", "200000");
     payload.put("gps", "120,122");
-    ApiRequest apiRequest = new ApiRequest();
+    ApiRequest apiRequest = new ApiRequest(validationPaths);
     Map<String, Object> process = apiRequest.headers(headers).payload(payload).requestURI(requestURI).process();
     System.out.println(GsonUtil.toJson(process));
   }

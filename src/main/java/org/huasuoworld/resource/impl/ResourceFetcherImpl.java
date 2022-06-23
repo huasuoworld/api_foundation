@@ -47,9 +47,8 @@ public class ResourceFetcherImpl implements ResourceFetcher {
     //step1 get url
     Server server = openAPI.getServers().get(0);
     String url = server.getUrl();
-    resource.setRequestURI(url + "/" + requestURI);
-    System.out.println("/applications".equals("/" + requestURI));
-    PathItem pathItem = openAPI.getPaths().get("/" + requestURI);
+    resource.setRequestURI(url + requestURI);
+    PathItem pathItem = openAPI.getPaths().get(requestURI);
     Schema schema;
     Operations operation = Operations.operation(pathItem);
     switch (operation) {

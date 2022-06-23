@@ -1,14 +1,17 @@
 package org.huasuoworld.input;
 
-import org.huasuoworld.task.TaskType;
-import org.huasuoworld.util.Pair;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang3.ObjectUtils;
 import org.huasuoworld.models.InputParameter;
 import org.huasuoworld.task.TaskRunner;
+import org.huasuoworld.task.TaskType;
 import org.huasuoworld.task.impl.TaskRunnerImpl;
+import org.huasuoworld.util.Pair;
 import org.huasuoworld.validation.ParameterValidation;
 import org.huasuoworld.validation.impl.ParameterValidationImpl;
 
@@ -21,6 +24,24 @@ public class ApiRequest extends RequestMessageTransfer {
 
   private InputParameter verifiedParameter = new InputParameter();
   private InputParameter inputParameter = new InputParameter();
+
+  private ApiRequest() {}
+
+  public ApiRequest(List<String> validationPaths) {
+    if(!ObjectUtils.isEmpty(validationPaths) && !validationPaths.isEmpty()) {
+      validationPaths.stream().forEach(openAPIUrl -> {
+        System.out.println("init .... " + openAPIUrl);
+        Optional<OpenAPI> validationOpenAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(openAPIUrl);
+        if(validationOpenAPIOpt.isPresent()) {
+          OpenAPI validationOpenAPI = validationOpenAPIOpt.get();
+          Paths paths = validationOpenAPI.getPaths();
+          if(!ObjectUtils.isEmpty(paths)) {
+            paths.keySet().stream().forEach(path -> OpenAPIBuilder.pathMap.put(path, validationOpenAPIOpt));
+          }
+        }
+      });
+    }
+  }
 
   public ApiRequest headers(Map<String, Object> headers) {
     getInputParameter().setHeaders(headers);
@@ -39,7 +60,8 @@ public class ApiRequest extends RequestMessageTransfer {
 
   public Map<String, Object> process() throws Exception {
     ParameterValidation instance = ParameterValidationImpl.getInstance();
-    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.getOpenAPIBuilder().openAPI(getInputParameter().getRequestURI(), URLS.VALIDATION);
+    String requestURI = getInputParameter().getRequestURI();
+    Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.pathMap.get(requestURI);
     if(!openAPIOpt.isPresent()) {
       return new HashMap<>();
     }

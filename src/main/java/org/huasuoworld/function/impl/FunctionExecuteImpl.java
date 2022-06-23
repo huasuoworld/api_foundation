@@ -50,27 +50,35 @@ public class FunctionExecuteImpl implements FunctionExecute {
         return executeMap;
       }
       Schema schema = openAPI.getComponents().getSchemas().get(inputOpt.get());
-      //step1 filter parameter map
-      if(!ObjectUtils.isEmpty(schema.getAllOf()) && !schema.getAllOf().isEmpty()) {
-        ComposedSchema composedSchema = (ComposedSchema) schema;
-        Map<String, Object> properties = composedSchema.getAllOf().get(0).getProperties();
-        if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
-          Map<String, Object> payloadVerified = new HashMap<>();
-          properties.keySet().stream().forEach(key -> {
-            payloadVerified.put(key, function.getPayload().get(key));
-          });
-          //reload payload
-          function.setPayload(payloadVerified);
-        }
-      } else {
-        Map<String, Object> properties = schema.getProperties();
-        if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
-          Map<String, Object> payloadVerified = new HashMap<>();
-          properties.keySet().stream().forEach(key -> {
-            payloadVerified.put(key, function.getPayload().get(key));
-          });
-          //reload payload
-          function.setPayload(payloadVerified);
+      if(!ObjectUtils.isEmpty(schema)) {
+        //step1 filter parameter map
+        if(!ObjectUtils.isEmpty(schema.getAllOf()) && !schema.getAllOf().isEmpty()) {
+          ComposedSchema composedSchema = (ComposedSchema) schema;
+          Map<String, Object> properties = composedSchema.getAllOf().get(0).getProperties();
+          if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
+            Map<String, Object> payloadVerified = new HashMap<>();
+            properties.keySet().stream().forEach(key -> {
+              Object object = function.getPayload().get(key);
+              if(!ObjectUtils.isEmpty(object)) {
+                payloadVerified.put(key, object);
+              }
+            });
+            //reload payload
+            function.setPayload(payloadVerified);
+          }
+        } else {
+          Map<String, Object> properties = schema.getProperties();
+          if(!ObjectUtils.isEmpty(properties) && !properties.isEmpty()) {
+            Map<String, Object> payloadVerified = new HashMap<>();
+            properties.keySet().stream().forEach(key -> {
+              Object object = function.getPayload().get(key);
+              if(!ObjectUtils.isEmpty(object)) {
+                payloadVerified.put(key, object);
+              }
+            });
+            //reload payload
+            function.setPayload(payloadVerified);
+          }
         }
       }
       Optional<String> classPathOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), "classPath");

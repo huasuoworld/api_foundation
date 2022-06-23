@@ -25,6 +25,7 @@ import org.huasuoworld.resource.Operations;
 public class OpenAPIBuilder {
 
   private static OpenAPIBuilder openAPIBuilder;
+  public static Map<String, Optional<OpenAPI>> pathMap = new HashMap<>();
 
   private OpenAPIBuilder() {
 
@@ -42,23 +43,41 @@ public class OpenAPIBuilder {
 
   /**
    * 根据requestURI请求路径获取validation目录下面yaml文件
-   * @param yamlResourcePath
+   * @param openAPIUrl
    * @return
    */
-  public Optional<OpenAPI> openAPI(String yamlResourcePath, URLS urls) {
-    if(StringUtils.isEmpty(yamlResourcePath)) {
+  public Optional<OpenAPI> openAPI(String openAPIUrl) {
+    if(StringUtils.isEmpty(openAPIUrl)) {
       return Optional.empty();
     }
-    Optional<String> fileUrlOpt = URLS.getUrlByFilename(urls, yamlResourcePath);
-    if(!fileUrlOpt.isPresent()) {
-      return Optional.empty();
-    }
-    String openAPIUrl = fileUrlOpt.get();
     ParseOptions options = new ParseOptions();
     options.setResolveFully(true);
     options.setResolveCombinators(true);
     OpenAPI openAPI = new OpenAPIV3Parser().readLocation(openAPIUrl, null, options).getOpenAPI();
     return Optional.ofNullable(openAPI);
+  }
+
+  public static Boolean isFunction(Optional<OpenAPI> openAPIOpt) {
+    if(!openAPIOpt.isPresent()) {
+      return Boolean.FALSE;
+    }
+    OpenAPI openAPI = openAPIOpt.get();
+    String version = openAPI.getInfo().getVersion();
+    if("function".equals(version)) {
+      return Boolean.TRUE;
+    } else if("resource".equals(version)) {
+      return Boolean.FALSE;
+    } else {
+      return Boolean.TRUE;
+    }
+  }
+
+  public static Optional<String> getFirstPath(Optional<OpenAPI> openAPIOpt) {
+    if(!openAPIOpt.isPresent()) {
+      return Optional.empty();
+    }
+    Optional<String> first = openAPIOpt.get().getPaths().keySet().stream().findFirst();
+    return first;
   }
 
   public static Optional<String> getVariables(Optional<OpenAPI> openAPIOpt, String extensionName) {
@@ -120,14 +139,6 @@ public class OpenAPIBuilder {
     } else {
       return Boolean.TRUE;
     }
-  }
-
-  public static String getResourceName(String resourceName) {
-    return resourceName.split("/")[0];
-  }
-
-  public static String getPathName(String resourceName) {
-    return resourceName.split("/")[1];
   }
 
   public static ObjectSchema fetchSchema(OpenAPI openAPI, String requestURI) {

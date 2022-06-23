@@ -1,9 +1,9 @@
 openapi: 3.0.1
 info:
-  version: 1.0.0
+  version: task
 servers:
   - variables:
       resources:
         enum:
-          - Application/applications
-          - SpringDataJpaPagingFunction
+          - src/test/resources/resource/Application.yaml
+          - src/test/resources/function/SpringDataJpaPagingFunction.yaml

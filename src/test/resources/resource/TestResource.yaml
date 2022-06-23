@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: testing source file
   description: This is a sample server Petstore
-  version: 1.0.0
+  version: resource
 servers:
   - url: http://localhost8080/api
 paths:
