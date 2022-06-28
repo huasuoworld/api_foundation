@@ -7,14 +7,11 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.huasuoworld.http.OkHttpClientUtil;
-import org.huasuoworld.input.OpenAPIBuilder;
 import org.huasuoworld.models.Resource;
 import org.huasuoworld.resource.Operations;
 import org.huasuoworld.resource.ResourceFetcher;
-import org.huasuoworld.resource.Schemas;
 import org.huasuoworld.util.Pair;
 
 /**
@@ -53,48 +50,23 @@ public class ResourceFetcherImpl implements ResourceFetcher {
     Operations operation = Operations.operation(pathItem);
     switch (operation) {
       case POST: {
-        Optional<String> getSchemaOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), Schemas.getSchemaByOperation(Schemas.REQUEST_SCHEMA, Operations.GET.getName()));
-        if(!getSchemaOpt.isPresent()) {
-          return new HashMap<>();
-        }
-        String getSchema = getSchemaOpt.get();
-        schema = pathItem.getPost().getRequestBody().getContent().get("application/json").getSchema().$ref(getSchema);
+        schema = pathItem.getPost().getRequestBody().getContent().get("application/json").getSchema();
         return options(resource, operation, schema);
       }
       case PUT: {
-        Optional<String> putSchemaOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), Schemas.getSchemaByOperation(Schemas.REQUEST_SCHEMA, Operations.PUT.getName()));
-        if(!putSchemaOpt.isPresent()) {
-          return new HashMap<>();
-        }
-        String putSchema = putSchemaOpt.get();
-        schema = pathItem.getPut().getRequestBody().getContent().get("application/json").getSchema().$ref(putSchema);
+        schema = pathItem.getPut().getRequestBody().getContent().get("application/json").getSchema();
         return options(resource, operation, schema);
       }
       case PATCH: {
-        Optional<String> patchSchemaOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), Schemas.getSchemaByOperation(Schemas.REQUEST_SCHEMA, Operations.PATCH.getName()));
-        if(!patchSchemaOpt.isPresent()) {
-          return new HashMap<>();
-        }
-        String patchSchema = patchSchemaOpt.get();
-        schema = pathItem.getPatch().getRequestBody().getContent().get("application/json").getSchema().$ref(patchSchema);
+        schema = pathItem.getPatch().getRequestBody().getContent().get("application/json").getSchema();
         return options(resource, operation, schema);
       }
       case DELETE: {
-        Optional<String> deleteSchemaOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), Schemas.getSchemaByOperation(Schemas.REQUEST_SCHEMA, Operations.DELETE.getName()));
-        if(!deleteSchemaOpt.isPresent()) {
-          return new HashMap<>();
-        }
-        String deleteSchema = deleteSchemaOpt.get();
-        schema = pathItem.getDelete().getRequestBody().getContent().get("application/json").getSchema().$ref(deleteSchema);
+        schema = pathItem.getDelete().getRequestBody().getContent().get("application/json").getSchema();
         return options(resource, operation, schema);
       }
       default: {
-        Optional<String> getSchemaOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(openAPI), Schemas.getSchemaByOperation(Schemas.REQUEST_SCHEMA, Operations.GET.getName()));
-        if(!getSchemaOpt.isPresent()) {
-          return new HashMap<>();
-        }
-        String getSchema = getSchemaOpt.get();
-        schema = pathItem.getGet().getRequestBody().getContent().get("application/json").getSchema().$ref(getSchema);
+        schema = pathItem.getGet().getRequestBody().getContent().get("application/json").getSchema();
         return options(resource, operation, schema);
       }
     }

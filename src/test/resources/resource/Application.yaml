@@ -8,10 +8,6 @@ servers:
     variables:
       resourceName:
         default: Application
-      /applications/get/requestBody/schemas:
-        default: '#/components/schemas/ApplicationVo'
-      /applications/post/requestBody/schemas:
-        default: '#/components/schemas/ApplicationVo'
 paths:
   /applications:
     get:
