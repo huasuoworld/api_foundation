@@ -1,22 +1,22 @@
 package org.huasuoworld.validation.impl;
 
-import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.ObjectUtils;
 import org.huasuoworld.input.OpenAPIBuilder;
-import org.huasuoworld.resource.Operations;
+import org.huasuoworld.models.InputParameter;
+import org.huasuoworld.output.Constant;
 import org.huasuoworld.task.TaskRunner;
 import org.huasuoworld.task.TaskType;
 import org.huasuoworld.task.impl.TaskRunnerImpl;
 import org.huasuoworld.util.GsonUtil;
 import org.huasuoworld.util.Pair;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.media.ObjectSchema;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.apache.commons.lang3.ObjectUtils;
-import org.huasuoworld.models.InputParameter;
-import org.huasuoworld.output.Constant;
 import org.huasuoworld.validation.ParameterValidation;
 
 /**
@@ -71,7 +71,7 @@ public class ParameterValidationImpl implements ParameterValidation {
     }
     OpenAPI openAPI = openAPIOpt.get();
     //step2 validation payload
-    ObjectSchema schema = OpenAPIBuilder.fetchSchema(openAPI, inputParameter.getRequestURI());
+    ObjectSchema schema = OpenAPIBuilder.fetchRequestBodySchema(openAPI, inputParameter.getRequestURI());
     if(!ObjectUtils.isEmpty(inputParameter.getPayload()) && !inputParameter.getPayload().isEmpty()) {
       //validation required
       if(!ObjectUtils.isEmpty(schema.getRequired())) {
@@ -102,5 +102,25 @@ public class ParameterValidationImpl implements ParameterValidation {
       }
     }
     return Pair.of(Boolean.TRUE, inputParameter.getPayload());
+  }
+
+  @Override
+  public Map<String, Object> responseBuilder(InputParameter finalParameter) {
+    if(ObjectUtils.isEmpty(finalParameter.getOpenAPI())) {
+      return finalParameter.getPayload();
+    }
+    Map<String, Object> responseFilterMap = new HashMap<>();
+    Schema schema = OpenAPIBuilder.fetchResponseBodySchema(finalParameter.getOpenAPI(), finalParameter.getRequestURI());
+    if(!ObjectUtils.isEmpty(finalParameter.getPayload()) && !finalParameter.getPayload().isEmpty()) {
+      schema.getProperties().keySet().stream().forEach(key -> {
+        if(finalParameter.getPayload().containsKey(key)) {
+          responseFilterMap.put(key.toString(), finalParameter.getPayload().get(key));
+        }
+      });
+    }
+    if(responseFilterMap.isEmpty()) {
+      return finalParameter.getPayload();
+    }
+    return responseFilterMap;
   }
 }

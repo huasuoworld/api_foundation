@@ -3,6 +3,7 @@ package org.huasuoworld.input;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.huasuoworld.output.ResponseCode;
 import org.huasuoworld.resource.Operations;
 
 /**
@@ -141,11 +143,35 @@ public class OpenAPIBuilder {
     }
   }
 
-  public static ObjectSchema fetchSchema(OpenAPI openAPI, String requestURI) {
+  public static ObjectSchema fetchRequestBodySchema(OpenAPI openAPI, String requestURI) {
     PathItem pathItem = openAPI.getPaths().get(requestURI);
     switch (Operations.operation(pathItem)) {
-      case POST: return (ObjectSchema) pathItem.getPost().getRequestBody().getContent().get("application/json").getSchema();
-      default: return (ObjectSchema) pathItem.getGet().getRequestBody().getContent().get("application/json").getSchema();
+      case POST: return (ObjectSchema) pathItem.getPost().getRequestBody()
+          .getContent().get("application/json").getSchema();
+      case PUT: return (ObjectSchema) pathItem.getPut().getRequestBody()
+          .getContent().get("application/json").getSchema();
+      case DELETE: return (ObjectSchema) pathItem.getDelete().getRequestBody()
+          .getContent().get("application/json").getSchema();
+      case PATCH: return (ObjectSchema) pathItem.getPatch().getRequestBody()
+          .getContent().get("application/json").getSchema();
+      default: return (ObjectSchema) pathItem.getGet().getRequestBody()
+          .getContent().get("application/json").getSchema();
+    }
+  }
+
+  public static Schema fetchResponseBodySchema(OpenAPI openAPI, String requestURI) {
+    PathItem pathItem = openAPI.getPaths().get(requestURI);
+    switch (Operations.operation(pathItem)) {
+      case POST: return pathItem.getPost().getResponses().get(ResponseCode.SUCCESS.getCode())
+          .getContent().get("application/json").getSchema();
+      case PUT: return pathItem.getPut().getResponses().get(ResponseCode.SUCCESS.getCode())
+          .getContent().get("application/json").getSchema();
+      case DELETE: return pathItem.getDelete().getResponses().get(ResponseCode.SUCCESS.getCode())
+          .getContent().get("application/json").getSchema();
+      case PATCH: return pathItem.getPatch().getResponses().get(ResponseCode.SUCCESS.getCode())
+          .getContent().get("application/json").getSchema();
+      default: return pathItem.getGet().getResponses().get(ResponseCode.SUCCESS.getCode())
+          .getContent().get("application/json").getSchema();
     }
   }
 }

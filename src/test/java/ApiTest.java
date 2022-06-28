@@ -3,7 +3,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.huasuoworld.input.ApiRequest;
-import org.huasuoworld.input.URLS;
 import org.huasuoworld.util.GsonUtil;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +18,6 @@ public class ApiTest {
     String validationPath = "src/test/resources/validation/withInvalidComposedModel.yaml";
     List<String> validationPaths = new ArrayList<>();
     validationPaths.add(validationPath);
-    System.setProperty(URLS.OPENAPI + "validation" + URLS.URL, "src/test/resources/validation/%s.yaml");
-    System.setProperty(URLS.OPENAPI + "function" + URLS.URL, "src/test/resources/function/%s.yaml");
-    System.setProperty(URLS.OPENAPI + "resource" + URLS.URL, "src/test/resources/resource/%s.yaml");
-    System.setProperty(URLS.OPENAPI + "task" + URLS.URL, "src/test/resources/task/%s.yaml");
     String requestURI = "/withInvalidComposedModel";
     Map<String, Object> headers = new HashMap<>();
     headers.put("token", "h1");

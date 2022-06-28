@@ -66,7 +66,14 @@ public class ApiRequest extends RequestMessageTransfer {
       return new HashMap<>();
     }
     getInputParameter().setOpenAPI(openAPIOpt.get());
-    return securityValid(instance, getInputParameter()).cookieValid(instance, getInputParameter()).payloadValid(instance, getInputParameter()).runTask(getVerifiedParameter());
+    Map<String, Object> responseMap = securityValid(instance, getInputParameter()).cookieValid(
+            instance, getInputParameter()).payloadValid(instance, getInputParameter())
+        .runTask(getVerifiedParameter());
+    InputParameter finalParameter = new InputParameter();
+    finalParameter.setPayload(responseMap);
+    finalParameter.setOpenAPI(openAPIOpt.get());
+    finalParameter.setRequestURI(requestURI);
+    return instance.responseBuilder(finalParameter);
   }
 
   private ApiRequest securityValid(ParameterValidation instance, InputParameter inputParameter) throws Exception {

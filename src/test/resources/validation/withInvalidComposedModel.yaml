@@ -42,6 +42,19 @@ paths:
       responses:
         200:
           description: success!
+          content:
+            application/json:
+              schema:
+                properties:
+                  applications:
+                    type: string
+                    example: 12345 El Monte Road
+                  test:
+                    type: string
+                    example: Los Altos Hills
+                  page:
+                    type: string
+                    example: CA
 components:
   schemas:
     ExtendedAddress:
