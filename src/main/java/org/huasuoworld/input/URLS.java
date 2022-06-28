@@ -2,7 +2,6 @@ package org.huasuoworld.input;
 
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 public enum URLS {
   VALIDATION("src/main/resources/validation/%s.yaml"),
@@ -39,7 +38,6 @@ public enum URLS {
     }
   }
 
-  @NotNull
   private static Optional validationPath(String filename, String urlConfigPath, URLS validation) {
     if (!StringUtils.isEmpty(urlConfigPath)) {
       return Optional.ofNullable(String.format(urlConfigPath, filename));

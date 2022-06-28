@@ -47,7 +47,12 @@ public class TaskRunnerImpl implements TaskRunner {
     Map<String, Object> responseMap = new HashMap<>();
     //step1 find file by taskName
     try {
-      Optional<String> taskNameOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(verifiedParameter.getOpenAPI()), taskType.getType());
+      Optional<String> taskNameOpt;
+      if(TaskType.SECURITY == taskType) {
+        taskNameOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(verifiedParameter.getOpenAPI()), taskType.getType());
+      } else {
+        taskNameOpt = OpenAPIBuilder.getVariables(Optional.ofNullable(verifiedParameter.getOpenAPI()), verifiedParameter.getRequestURI());
+      }
       if(!taskNameOpt.isPresent()) {
         return responseMap;
       }

@@ -16,10 +16,10 @@ dependencies {
     implementation 'io.swagger.parser.v3:swagger-parser:2.0.32'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
     // define a BOM and its version
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
+//    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
     // define any required OkHttp artifacts without version
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation("com.google.code.gson:gson:2.9.0")
 }
 

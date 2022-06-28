@@ -9,35 +9,18 @@ servers:
     variables:
       security:
         default: src/test/resources/task/SecurityTask
-      tasks:
+      /withInvalidComposedModel:
         default: src/test/resources/task/TestTask.yaml
+      /applications:
+        default: src/test/resources/task/ApplicationSaveTask.yaml
 paths:
   /withInvalidComposedModel:
     post:
-      operationId: withInvalidComposedModel
       requestBody:
         content:
           application/json:
             schema:
-              required:
-                - gps
-                - street
-              type: object
-              properties:
-                street:
-                  type: string
-                  example: 12345 El Monte Road
-                city:
-                  type: string
-                  example: Los Altos Hills
-                state:
-                  type: string
-                  example: CA
-                zip:
-                  type: string
-                  example: "94022"
-                gps:
-                  type: string
+              $ref: '#/components/schemas/ApplicationVo'
         required: false
       responses:
         200:
@@ -45,42 +28,58 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  applications:
-                    type: string
-                    example: 12345 El Monte Road
-                  test:
-                    type: string
-                    example: Los Altos Hills
-                  page:
-                    type: string
-                    example: CA
+                $ref: '#/components/schemas/ApplicationDto'
+  /applications:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationVo'
+        required: false
+      responses:
+        200:
+          description: success!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDto'
 components:
   schemas:
-    ExtendedAddress:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/Address'
-        - required:
-            - gps
-          type: object
-          properties:
-            gps:
-              type: string
-    Address:
+    ApplicationVo:
       required:
-        - street
+        - appName
       type: object
       properties:
-        street:
+        appName:
+          type: string
+          example: test
+        appProfile:
+          type: string
+          example: test
+        appLabel:
+          type: string
+          example: test
+        appCreated:
+          type: long
+          example: 2022-06-10
+        appModified:
+          type: long
+          example: 2022-06-11
+    ApplicationDto:
+      required:
+        - applications
+      type: object
+      properties:
+        applications:
           type: string
           example: 12345 El Monte Road
-        city:
+        test:
           type: string
           example: Los Altos Hills
-        state:
+        page:
           type: string
           example: CA
-        zip:
+        httpStatusCode:
           type: string
-          example: "94022"
+          example: 200

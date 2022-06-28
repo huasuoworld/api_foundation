@@ -93,7 +93,7 @@ public class ParameterValidationImpl implements ParameterValidation {
           return false;
         }
         String type = schema.getProperties().get(key).getType();
-        String paramType = inputParameter.getPayload().get(key).getClass().getTypeName().replace("java.lang.", "").toLowerCase();
+        String paramType = inputParameter.getPayload().get(key).getClass().getTypeName().replace("java.lang.", "").replace("java.util.", "").toLowerCase();
         return !type.equals(paramType);
       }).collect(Collectors.toList());
       if(!ObjectUtils.isEmpty(payloadList) && payloadList.size() > 0) {

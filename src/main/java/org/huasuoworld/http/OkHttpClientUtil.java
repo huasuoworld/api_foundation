@@ -1,5 +1,6 @@
 package org.huasuoworld.http;
 
+import org.huasuoworld.output.Constant;
 import org.huasuoworld.resource.Operations;
 import org.huasuoworld.util.Pair;
 import java.util.HashMap;
@@ -51,17 +52,22 @@ public class OkHttpClientUtil {
   }
 
   public Pair<Boolean, Map<String, Object>> httpGet(Resource resource) {
+    Map<String, Object> responseMap = new HashMap<>();
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
         .build();
-
     try (Response response = okHttpClient.newCall(request).execute()) {
+      String responseBody = new String(response.body().bytes(), "UTF-8");
+      System.out.println("httpGet " + responseBody);
+      Map<String, Object> httpResponseMap = GsonUtil.parseMaps(responseBody);
+      if(!ObjectUtils.isEmpty(httpResponseMap)) {
+        responseMap.putAll(httpResponseMap);
+      }
+      responseMap.put(Constant.HTTP_STATUS_CODE, response.code());
       if(response.isSuccessful()) {
-        String responseBody = new String(response.body().bytes(), "UTF-8");
-        System.out.println("httpGet " + responseBody);
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+        return Pair.of(Boolean.TRUE, responseMap);
       } else {
-        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+        return Pair.of(Boolean.FALSE, responseMap);
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -71,18 +77,24 @@ public class OkHttpClientUtil {
   }
 
   public Pair<Boolean, Map<String, Object>> httpPost(Resource resource) {
+    Map<String, Object> responseMap = new HashMap<>();
     RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
         .post(body)
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
+      String responseBody = new String(response.body().bytes(), "UTF-8");
+      System.out.println("httpPost..." + responseBody);
+      Map<String, Object> httpResponseMap = GsonUtil.parseMaps(responseBody);
+      if(!ObjectUtils.isEmpty(httpResponseMap)) {
+        responseMap.putAll(httpResponseMap);
+      }
+      responseMap.put(Constant.HTTP_STATUS_CODE, response.code());
       if(response.isSuccessful()) {
-        String responseBody = new String(response.body().bytes(), "UTF-8");
-        System.out.println(responseBody);
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+        return Pair.of(Boolean.TRUE, responseMap);
       } else {
-        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+        return Pair.of(Boolean.FALSE, responseMap);
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -91,18 +103,24 @@ public class OkHttpClientUtil {
   }
 
   public Pair<Boolean, Map<String, Object>> httpPut(Resource resource) {
+    Map<String, Object> responseMap = new HashMap<>();
     RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
         .put(body)
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
+      String responseBody = new String(response.body().bytes(), "UTF-8");
+      System.out.println("httpPut..." + responseBody);
+      Map<String, Object> httpResponseMap = GsonUtil.parseMaps(responseBody);
+      if(!ObjectUtils.isEmpty(httpResponseMap)) {
+        responseMap.putAll(httpResponseMap);
+      }
+      responseMap.put(Constant.HTTP_STATUS_CODE, response.code());
       if(response.isSuccessful()) {
-        String responseBody = new String(response.body().bytes(), "UTF-8");
-        System.out.println(responseBody);
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+        return Pair.of(Boolean.TRUE, responseMap);
       } else {
-        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+        return Pair.of(Boolean.FALSE, httpResponseMap);
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -111,18 +129,24 @@ public class OkHttpClientUtil {
   }
 
   public Pair<Boolean, Map<String, Object>> httpPatch(Resource resource) {
+    Map<String, Object> responseMap = new HashMap<>();
     RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
         .patch(body)
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
+      String responseBody = new String(response.body().bytes(), "UTF-8");
+      System.out.println("httpPatch..." + responseBody);
+      Map<String, Object> httpResponseMap = GsonUtil.parseMaps(responseBody);
+      if(!ObjectUtils.isEmpty(httpResponseMap)) {
+        responseMap.putAll(httpResponseMap);
+      }
+      responseMap.put(Constant.HTTP_STATUS_CODE, response.code());
       if(response.isSuccessful()) {
-        String responseBody = new String(response.body().bytes(), "UTF-8");
-        System.out.println(responseBody);
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+        return Pair.of(Boolean.TRUE, responseMap);
       } else {
-        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+        return Pair.of(Boolean.FALSE, responseMap);
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -131,18 +155,24 @@ public class OkHttpClientUtil {
   }
 
   public Pair<Boolean, Map<String, Object>> httpDelete(Resource resource) {
+    Map<String, Object> responseMap = new HashMap<>();
     RequestBody body = RequestBody.create(GsonUtil.toJson(resource.getPayload()), JSON);
     Request request = new Request.Builder()
         .url(resource.getRequestURI())
         .delete(body)
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
+      String responseBody = new String(response.body().bytes(), "UTF-8");
+      System.out.println("httpDelete..." + responseBody);
+      Map<String, Object> httpResponseMap = GsonUtil.parseMaps(responseBody);
+      if(!ObjectUtils.isEmpty(httpResponseMap)) {
+        responseMap.putAll(httpResponseMap);
+      }
+      responseMap.put(Constant.HTTP_STATUS_CODE, response.code());
       if(response.isSuccessful()) {
-        String responseBody = new String(response.body().bytes(), "UTF-8");
-        System.out.println(responseBody);
-        return Pair.of(Boolean.TRUE, GsonUtil.parseMaps(responseBody));
+        return Pair.of(Boolean.TRUE, responseMap);
       } else {
-        return Pair.of(Boolean.FALSE, GsonUtil.parseMaps(GsonUtil.toJson(response)));
+        return Pair.of(Boolean.FALSE, responseMap);
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);

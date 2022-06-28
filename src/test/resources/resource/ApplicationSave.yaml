@@ -10,7 +10,7 @@ servers:
         default: Application
 paths:
   /applications:
-    get:
+    post:
       requestBody:
         content:
           application/json:
