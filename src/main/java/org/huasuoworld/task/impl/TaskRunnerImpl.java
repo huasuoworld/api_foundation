@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.ObjectUtils;
 import org.huasuoworld.function.impl.FunctionExecuteImpl;
 import org.huasuoworld.input.OpenAPIBuilder;
-import org.huasuoworld.input.URLS;
 import org.huasuoworld.models.Function;
 import org.huasuoworld.models.InputParameter;
 import org.huasuoworld.models.Resource;
@@ -16,6 +15,7 @@ import org.huasuoworld.resource.impl.ResourceFetcherImpl;
 import org.huasuoworld.task.TaskRunner;
 import org.huasuoworld.task.TaskType;
 import org.huasuoworld.util.GsonUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author: huacailiang
@@ -68,19 +68,9 @@ public class TaskRunnerImpl implements TaskRunner {
           continue;
         }
         Boolean isFunction = OpenAPIBuilder.isFunction(openAPIOpt);
+        Map<String, Object> parameter = mergeResponse(verifiedParameter, responseMap);
         if(isFunction) {
           System.out.println("task run function start");
-          Map<String, Object> parameter = new HashMap<>();
-          if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
-            parameter.putAll(verifiedParameter.getHeaders());
-          }
-          if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
-            parameter.putAll(verifiedParameter.getCookies());
-          }
-          parameter.putAll(verifiedParameter.getPayload());
-          if(!responseMap.isEmpty()) {
-            parameter.putAll(responseMap);
-          }
           Function function = new Function();
           function.payload(parameter).openAPI(openAPIOpt.get());
           Optional<String> functionNameOpt = OpenAPIBuilder.getVariables(openAPIOpt, "functionName");
@@ -95,17 +85,6 @@ public class TaskRunnerImpl implements TaskRunner {
         } else {
           System.out.println("task run resource start");
           //step2 fetch resource
-          Map<String, Object> parameter = new HashMap<>();
-          if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
-            parameter.putAll(verifiedParameter.getHeaders());
-          }
-          if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
-            parameter.putAll(verifiedParameter.getCookies());
-          }
-          parameter.putAll(verifiedParameter.getPayload());
-          if(!responseMap.isEmpty()) {
-            parameter.putAll(responseMap);
-          }
           Resource resource = new Resource();
           resource.payload(parameter).openAPI(openAPIOpt.get());
           Optional<String> resourceNameOpt = OpenAPIBuilder.getVariables(openAPIOpt, "resourceName");
@@ -130,5 +109,22 @@ public class TaskRunnerImpl implements TaskRunner {
       e.printStackTrace();
       return responseMap;
     }
+  }
+
+  @NotNull
+  private Map<String, Object> mergeResponse(InputParameter verifiedParameter,
+      Map<String, Object> responseMap) {
+    Map<String, Object> parameter = new HashMap<>();
+    if(!ObjectUtils.isEmpty(verifiedParameter.getHeaders()) && !verifiedParameter.getHeaders().isEmpty()) {
+      parameter.putAll(verifiedParameter.getHeaders());
+    }
+    if(!ObjectUtils.isEmpty(verifiedParameter.getCookies()) && !verifiedParameter.getCookies().isEmpty()) {
+      parameter.putAll(verifiedParameter.getCookies());
+    }
+    parameter.putAll(verifiedParameter.getPayload());
+    if(!responseMap.isEmpty()) {
+      parameter.putAll(responseMap);
+    }
+    return parameter;
   }
 }
