@@ -1,5 +1,8 @@
 package org.huasuoworld.http;
 
+import okhttp3.HttpUrl;
+import okhttp3.HttpUrl.Builder;
+import org.apache.commons.lang3.StringUtils;
 import org.huasuoworld.output.Constant;
 import org.huasuoworld.resource.Operations;
 import org.huasuoworld.util.Pair;
@@ -53,8 +56,20 @@ public class OkHttpClientUtil {
 
   public Pair<Boolean, Map<String, Object>> httpGet(Resource resource) {
     Map<String, Object> responseMap = new HashMap<>();
+    if(StringUtils.isEmpty(resource.getRequestURI())) {
+      return  Pair.of(Boolean.TRUE, responseMap);
+    }
+    Builder requestURLBuilder = HttpUrl.parse(resource.getRequestURI()).newBuilder();
+    if(!ObjectUtils.isEmpty(resource.getPayload()) && !resource.getPayload().isEmpty()) {
+      resource.getPayload().keySet().forEach(payloadKey -> {
+        if(!ObjectUtils.isEmpty(resource.getPayload().get(payloadKey))) {
+          requestURLBuilder.addQueryParameter(payloadKey, resource.getPayload().get(payloadKey).toString());
+        }
+      });
+    }
+    System.out.println(requestURLBuilder.build());
     Request request = new Request.Builder()
-        .url(resource.getRequestURI())
+        .url(requestURLBuilder.build())
         .build();
     try (Response response = okHttpClient.newCall(request).execute()) {
       String responseBody = new String(response.body().bytes(), "UTF-8");

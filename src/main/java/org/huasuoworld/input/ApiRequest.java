@@ -22,9 +22,6 @@ import org.huasuoworld.validation.impl.ParameterValidationImpl;
  **/
 public class ApiRequest extends RequestMessageTransfer {
 
-  private InputParameter verifiedParameter = new InputParameter();
-  private InputParameter inputParameter = new InputParameter();
-
   private ApiRequest() {}
 
   public ApiRequest(List<String> validationPaths) {
@@ -43,32 +40,18 @@ public class ApiRequest extends RequestMessageTransfer {
     }
   }
 
-  public ApiRequest headers(Map<String, Object> headers) {
-    getInputParameter().setHeaders(headers);
-    return this;
-  }
-
-  public ApiRequest payload(Map<String, Object> payload) {
-    getInputParameter().setPayload(payload);
-    return this;
-  }
-
-  public ApiRequest requestURI(String requestURI) {
-    getInputParameter().setRequestURI(requestURI);
-    return this;
-  }
-
-  public Map<String, Object> process() throws Exception {
+  public Map<String, Object> process(InputParameter inputParameter) throws Exception {
+    InputParameter verifiedParameter = new InputParameter();
     ParameterValidation instance = ParameterValidationImpl.getInstance();
-    String requestURI = getInputParameter().getRequestURI();
+    String requestURI = inputParameter.getRequestURI();
     Optional<OpenAPI> openAPIOpt = OpenAPIBuilder.pathMap.get(requestURI);
     if(!openAPIOpt.isPresent()) {
       return new HashMap<>();
     }
-    getInputParameter().setOpenAPI(openAPIOpt.get());
-    Map<String, Object> responseMap = securityValid(instance, getInputParameter()).cookieValid(
-            instance, getInputParameter()).payloadValid(instance, getInputParameter())
-        .runTask(getVerifiedParameter());
+    inputParameter.setOpenAPI(openAPIOpt.get());
+    Map<String, Object> responseMap = securityValid(instance, inputParameter, verifiedParameter).cookieValid(
+            instance, inputParameter, verifiedParameter).payloadValid(instance, inputParameter, verifiedParameter)
+        .runTask(verifiedParameter);
     InputParameter finalParameter = new InputParameter();
     finalParameter.setPayload(responseMap);
     finalParameter.setOpenAPI(openAPIOpt.get());
@@ -76,7 +59,7 @@ public class ApiRequest extends RequestMessageTransfer {
     return instance.responseBuilder(finalParameter);
   }
 
-  private ApiRequest securityValid(ParameterValidation instance, InputParameter inputParameter) throws Exception {
+  private ApiRequest securityValid(ParameterValidation instance, InputParameter inputParameter, InputParameter verifiedParameter) throws Exception {
     System.out.println("securityValid start");
     //TODO security
     //validation headers
@@ -86,12 +69,12 @@ public class ApiRequest extends RequestMessageTransfer {
     }
     //TODO
     Map<String, Object> headersMap = (Map<String, Object>) headersValidPair.snd;
-    getVerifiedParameter().setHeaders(headersMap);
+    verifiedParameter.setHeaders(headersMap);
     System.out.println("securityValid finish");
     return this;
   }
 
-  public ApiRequest cookieValid(ParameterValidation instance, InputParameter inputParameter) throws Exception {
+  public ApiRequest cookieValid(ParameterValidation instance, InputParameter inputParameter, InputParameter verifiedParameter) throws Exception {
     System.out.println("cookieValid start");
     //validation cookies
     Pair<Boolean, Object> cookiesValidPair = instance.cookiesValid(inputParameter);
@@ -100,12 +83,12 @@ public class ApiRequest extends RequestMessageTransfer {
     }
     //TODO
     Map<String, Object> cookiesMap = (Map<String, Object>) cookiesValidPair.snd;
-    getVerifiedParameter().setCookies(cookiesMap);
+    verifiedParameter.setCookies(cookiesMap);
     System.out.println("cookieValid finish");
     return this;
   }
 
-  private ApiRequest payloadValid(ParameterValidation instance, InputParameter inputParameter) throws Exception {
+  private ApiRequest payloadValid(ParameterValidation instance, InputParameter inputParameter, InputParameter verifiedParameter) throws Exception {
     System.out.println("payloadValid start");
     //validation payload
     Pair<Boolean, Object> payloadValidPair = instance.payloadValid(inputParameter);
@@ -114,9 +97,9 @@ public class ApiRequest extends RequestMessageTransfer {
     }
     //TODO
     Map<String, Object> payloadMap = (Map<String, Object>) payloadValidPair.snd;
-    getVerifiedParameter().setPayload(payloadMap);
-    getVerifiedParameter().setRequestURI(inputParameter.getRequestURI());
-    getVerifiedParameter().setOpenAPI(inputParameter.getOpenAPI());
+    verifiedParameter.setPayload(payloadMap);
+    verifiedParameter.setRequestURI(inputParameter.getRequestURI());
+    verifiedParameter.setOpenAPI(inputParameter.getOpenAPI());
     System.out.println("payloadValid finish");
     return this;
   }
@@ -127,13 +110,5 @@ public class ApiRequest extends RequestMessageTransfer {
     TaskRunner taskRunner = TaskRunnerImpl.getInstance();
     System.out.println("runTask process");
     return taskRunner.run(verifiedParameter, TaskType.TASKS);
-  }
-
-  public InputParameter getVerifiedParameter() {
-    return verifiedParameter;
-  }
-
-  public InputParameter getInputParameter() {
-    return inputParameter;
   }
 }
