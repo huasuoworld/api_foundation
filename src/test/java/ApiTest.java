@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.huasuoworld.input.ApiRequest;
+import org.huasuoworld.models.InputParameter;
 import org.huasuoworld.util.GsonUtil;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,11 @@ public class ApiTest {
     payload.put("zip", "200000");
     payload.put("gps", "120,122");
     ApiRequest apiRequest = new ApiRequest(validationPaths);
-    Map<String, Object> process = apiRequest.headers(headers).payload(payload).requestURI(requestURI).process();
+    InputParameter inputParameter = new InputParameter();
+    inputParameter.setHeaders(headers);
+    inputParameter.setPayload(payload);
+    inputParameter.setRequestURI(requestURI);
+    Map<String, Object> process = apiRequest.process(inputParameter);
     System.out.println(GsonUtil.toJson(process));
   }
 }
