@@ -61,10 +61,10 @@ components:
           type: string
           example: test
         appCreated:
-          type: long
+          type: string
           example: 2022-06-10
         appModified:
-          type: long
+          type: string
           example: 2022-06-11
     ApplicationDto:
       required:

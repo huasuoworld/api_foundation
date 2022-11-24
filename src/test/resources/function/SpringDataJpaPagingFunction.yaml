@@ -6,9 +6,9 @@ info:
 servers:
   - variables:
       functionName:
-        default: JwtTokenVerify
+        default: SpringDataJpaPagingFunction
       classPath:
-        default: org.huasuoworld.function.util.SpringDataJpaPagingFunction
+        default: cn.gongbao.foundation.function.util.SpringDataJpaPagingFunction
       input:
         default: Application
       output:

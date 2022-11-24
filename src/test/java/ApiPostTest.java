@@ -3,8 +3,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.huasuoworld.input.ApiRequest;
-import org.huasuoworld.util.GsonUtil;
+import org.huasuoworld.foundation.input.ApiRequest;
+import org.huasuoworld.foundation.util.GsonUtil;
 import org.junit.jupiter.api.Test;
 
 /**

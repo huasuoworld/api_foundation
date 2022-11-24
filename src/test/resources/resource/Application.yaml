@@ -8,6 +8,8 @@ servers:
     variables:
       resourceName:
         default: Application
+      security:
+        default: admin,123456
 paths:
   /applications:
     get:
@@ -21,6 +23,10 @@ paths:
         200:
           description: success!
 components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
   schemas:
     ApplicationVo:
       required:
