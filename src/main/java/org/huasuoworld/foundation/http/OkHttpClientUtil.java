@@ -78,7 +78,7 @@ public class OkHttpClientUtil {
       });
     }
     //Authorization from yaml config
-    if(StringUtils.isNotEmpty(resource.getUsername()) && !StringUtils.isNotEmpty(resource.getPassword())) {
+    if(StringUtils.isNotEmpty(resource.getUsername()) && StringUtils.isNotEmpty(resource.getPassword())) {
       String credential = Credentials.basic(resource.getUsername(), resource.getPassword());
       headerBuilder.add("Authorization", credential);
     }
@@ -270,9 +270,11 @@ public class OkHttpClientUtil {
 
   public static Map<String, String> fetchConfigMap(String url, String area) {
     Builder requestURLBuilder = HttpUrl.parse(url).newBuilder();
-    requestURLBuilder.addQueryParameter("application", area);
     Headers.Builder headerBuilder = new Headers.Builder();
-    headerBuilder.add("area", area);
+    if(StringUtils.isNotEmpty(area)) {
+      requestURLBuilder.addQueryParameter("application", area);
+      headerBuilder.add("area", area);
+    }
     Request request = new Request.Builder().url(requestURLBuilder.build()).headers(headerBuilder.build()).build();
     try (Response response = okHttpClient.newCall(request).execute()) {
       String responseBody = new String(response.body().bytes(), "UTF-8");

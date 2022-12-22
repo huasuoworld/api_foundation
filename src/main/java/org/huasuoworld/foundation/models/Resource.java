@@ -18,7 +18,7 @@ public class Resource implements java.io.Serializable {
 
   public static Resource getResource(Map<String, Object> resourceMap) {
       Resource resource = new Resource();
-      if(resourceMap.containsKey(resourceMap.get("Headers"))) {
+      if(resourceMap.containsKey("Headers")) {
         resource.setHeaders((Map<String, Object>) resourceMap.get("Headers"));
       }
       resource.payload(resourceMap);
